@@ -1,4 +1,4 @@
-# STM32编译输出文件
+# STM32CubeIDE 编译输出
 Debug/
 Release/
 *.elf
@@ -7,11 +7,33 @@ Release/
 *.map
 *.lst
 
-# CubeIDE配置文件
+# 中间文件
+*.o
+*.su
+*.d
+
+# IDE配置
 .settings/
+.cproject
+.project
 *.launch
+
+# CubeMX临时文件
 .mxproject
 
-# 系统文件
+# 系统垃圾
 .DS_Store
 Thumbs.db
+*.swp
+*~
+~$*
+
+# 备份文件
+*.bak
+*_backup.*
+
+# 其他IDE
+.vscode/
+.idea/
+
+随时在变化的规划/
