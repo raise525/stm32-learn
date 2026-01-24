@@ -30,6 +30,7 @@
 #include "i2c.h"        // 需要I2C句柄
 #include <stdio.h>
 #include <string.h>
+#include "dht11.h"
 
 /* USER CODE END Includes */
 
@@ -50,7 +51,10 @@
 
 /* Private variables ---------------------------------------------------------*/
 /* USER CODE BEGIN Variables */
+
 extern I2C_HandleTypeDef hi2c1;
+extern osMessageQueueId_t sensorQueueHandle;
+
 /* USER CODE END Variables */
 /* Definitions for Task_LED */
 osThreadId_t Task_LEDHandle;
@@ -66,24 +70,17 @@ const osThreadAttr_t Task_Display_attributes = {
   .stack_size = 256 * 4,
   .priority = (osPriority_t) osPriorityNormal,
 };
-/* Definitions for Producer */
-osThreadId_t ProducerHandle;
-const osThreadAttr_t Producer_attributes = {
-  .name = "Producer",
-  .stack_size = 128 * 4,
-  .priority = (osPriority_t) osPriorityNormal,
-};
-/* Definitions for Consumer */
-osThreadId_t ConsumerHandle;
-const osThreadAttr_t Consumer_attributes = {
-  .name = "Consumer",
+/* Definitions for Sensor_Task1 */
+osThreadId_t Sensor_Task1Handle;
+const osThreadAttr_t Sensor_Task1_attributes = {
+  .name = "Sensor_Task1",
   .stack_size = 256 * 4,
   .priority = (osPriority_t) osPriorityNormal,
 };
-/* Definitions for dataQueue */
-osMessageQueueId_t dataQueueHandle;
-const osMessageQueueAttr_t dataQueue_attributes = {
-  .name = "dataQueue"
+/* Definitions for sensorQueue */
+osMessageQueueId_t sensorQueueHandle;
+const osMessageQueueAttr_t sensorQueue_attributes = {
+  .name = "sensorQueue"
 };
 
 /* Private function prototypes -----------------------------------------------*/
@@ -93,8 +90,7 @@ const osMessageQueueAttr_t dataQueue_attributes = {
 
 void StartLEDTask(void *argument);
 void StartDisplayTask(void *argument);
-void Producer_Task(void *argument);
-void Consumer_Task(void *argument);
+void Sensor_Task(void *argument);
 
 void MX_FREERTOS_Init(void); /* (MISRA C 2004 rule 8.1) */
 
@@ -105,6 +101,9 @@ void MX_FREERTOS_Init(void); /* (MISRA C 2004 rule 8.1) */
   */
 void MX_FREERTOS_Init(void) {
   /* USER CODE BEGIN Init */
+
+	// 初始化LED为灭
+	HAL_GPIO_WritePin(LED_GPIO_Port, LED_Pin, GPIO_PIN_SET);
 
   /* USER CODE END Init */
 
@@ -121,8 +120,8 @@ void MX_FREERTOS_Init(void) {
   /* USER CODE END RTOS_TIMERS */
 
   /* Create the queue(s) */
-  /* creation of dataQueue */
-  dataQueueHandle = osMessageQueueNew (10, sizeof(uint32_t), &dataQueue_attributes);
+  /* creation of sensorQueue */
+  sensorQueueHandle = osMessageQueueNew (5, 8, &sensorQueue_attributes);
 
   /* USER CODE BEGIN RTOS_QUEUES */
 	/* add queues, ... */
@@ -135,11 +134,8 @@ void MX_FREERTOS_Init(void) {
   /* creation of Task_Display */
   Task_DisplayHandle = osThreadNew(StartDisplayTask, NULL, &Task_Display_attributes);
 
-  /* creation of Producer */
-  ProducerHandle = osThreadNew(Producer_Task, NULL, &Producer_attributes);
-
-  /* creation of Consumer */
-  ConsumerHandle = osThreadNew(Consumer_Task, NULL, &Consumer_attributes);
+  /* creation of Sensor_Task1 */
+  Sensor_Task1Handle = osThreadNew(Sensor_Task, NULL, &Sensor_Task1_attributes);
 
   /* USER CODE BEGIN RTOS_THREADS */
 	/* add threads, ... */
@@ -161,17 +157,32 @@ void MX_FREERTOS_Init(void) {
 void StartLEDTask(void *argument)
 {
   /* USER CODE BEGIN StartLEDTask */
-	for (;;) {
-		// 亮100ms
-		HAL_GPIO_WritePin(LED_GPIO_Port, LED_Pin, GPIO_PIN_RESET);
-		//osDelay(100);
-		osDelay(1000);
 
-		// 灭900ms（总共1秒周期）
+	// 启动后先亮1秒表示系统启动
+	HAL_GPIO_WritePin(LED_GPIO_Port, LED_Pin, GPIO_PIN_RESET);
+	osDelay(1000);
+	HAL_GPIO_WritePin(LED_GPIO_Port, LED_Pin, GPIO_PIN_SET);
+	osDelay(1000);
+
+	for (;;) {
+		// 系统心跳：每3秒闪一次（亮200ms）
+		HAL_GPIO_WritePin(LED_GPIO_Port, LED_Pin, GPIO_PIN_RESET);
+		osDelay(200);
 		HAL_GPIO_WritePin(LED_GPIO_Port, LED_Pin, GPIO_PIN_SET);
-		//osDelay(900);
-		osDelay(2000);
+		osDelay(2800);
 	}
+
+//	for (;;) {
+//		// 亮1s
+//		HAL_GPIO_WritePin(LED_GPIO_Port, LED_Pin, GPIO_PIN_RESET);
+//
+//		osDelay(1000);
+//
+//		// 灭2s（总共3秒周期）
+//		HAL_GPIO_WritePin(LED_GPIO_Port, LED_Pin, GPIO_PIN_SET);
+//
+//		osDelay(2000);
+//	}
   /* USER CODE END StartLEDTask */
 }
 
@@ -185,118 +196,123 @@ void StartLEDTask(void *argument)
 void StartDisplayTask(void *argument)
 {
   /* USER CODE BEGIN StartDisplayTask */
-	uint32_t counter = 0;
+	DHT11_Data_t sensor_data;
 	char buffer[32];
+	uint32_t display_counter = 0;
+	//uint32_t data_count = 0;
 
-	// 初始化OLED（需要传入I2C句柄）
-	OLED_Init(hi2c1);           // 你的驱动需要I2C句柄参数
-	OLED_Fill(0x00);            // 清屏（填充0x00）
 
-	// 显示固定内容
-	OLED_BOOL_DrawStr(0, 0, (uint8_t*) "FreeRTOS Day3", 0x00);
-	OLED_BOOL_DrawStr(0, 16, (uint8_t*) "Queue Test", 0x00);
-	OLED_BOOL_DrawStr(0, 32, (uint8_t*) "Producer->Consumer", 0x00);
-	OLED_Refresh();  // 初始显示
-	// 第48行留给Consumer显示队列数据
+// 等待系统稳定
+	osDelay(800);
 
-	osDelay(1000);              // 等待1秒
+	// 初始化OLED
+	OLED_Init(hi2c1);
+	osDelay(50);  // 等待初始化完成
+
+	// 清屏
+	OLED_Fill(0x00);
+	osDelay(50);
+
+	// 显示固定标题
+	OLED_BOOL_DrawStr(0, 0, (uint8_t*) "FreeRTOS Day4", 0x00);
+	OLED_BOOL_DrawStr(0, 16, (uint8_t*) "DHT11 Online", 0x00);
+
+	// 初始化显示
+	OLED_BOOL_DrawStr(0, 32, (uint8_t*) "Run:000000", 0x00);
+
+	// 初始化温湿度显示区域（显示"--"表示等待数据）
+	OLED_BOOL_DrawStr(0, 48, (uint8_t*) "T:--C", 0x00);
+	OLED_BOOL_DrawStr(64, 48, (uint8_t*) "H:--%", 0x00);
+	OLED_Refresh();
 
 	for (;;) {
-		counter++;
 
-		// 清屏
-		//OLED_Fill(0x00);
+		display_counter++;
 
-//		// 显示计数器
-//		sprintf(buffer, "Count: %06lu", counter);
-//		OLED_BOOL_DrawStr(0, 0, (uint8_t*) buffer, OLED_BOOL_Replace);
-//
-//		// 显示状态
-//		OLED_BOOL_DrawStr(0, 16, (uint8_t*) "FreeRTOS Running",
-//				OLED_BOOL_Replace);
-//		OLED_BOOL_DrawStr(0, 32, (uint8_t*) "LED Task Active",
-//				OLED_BOOL_Replace);
-//		OLED_BOOL_DrawStr(0, 48, (uint8_t*) "Day1 Success!", OLED_BOOL_Replace);
+		// 1. 更新运行计数器
+		// 方案A：先写空格清除，再写新内容（简单可靠）
+		OLED_BOOL_DrawStr(24, 32, (uint8_t*) "      ", 0x00); // 清除"Run:"后面的6位数字
+		sprintf(buffer, "%06lu", display_counter);
+		OLED_BOOL_DrawStr(24, 32, (uint8_t*) buffer, 0x00);
 
-		// 只更新计数器区域，不覆盖整个屏幕
-		sprintf(buffer, "Count:%06lu", counter);
-		// 在特定位置显示，比如第40行
-		OLED_BOOL_DrawStr(0, 40, (uint8_t*) buffer, 0x00);
+		// 2. 尝试获取传感器数据
+		if (osMessageQueueGet(sensorQueueHandle, &sensor_data, NULL, 0)
+				== osOK) {
+			// 显示温度（先清除旧温度数字）
+			OLED_BOOL_DrawStr(8, 48, (uint8_t*) "  ", 0x00);  // 清除温度数字（2位）
+			sprintf(buffer, "%2d", (int) sensor_data.temperature);
+			OLED_BOOL_DrawStr(8, 48, (uint8_t*) buffer, 0x00);
 
-		// 刷新到屏幕
+			// 显示湿度（先清除旧湿度数字）
+			OLED_BOOL_DrawStr(72, 48, (uint8_t*) "  ", 0x00);  // 清除湿度数字（2位）
+			sprintf(buffer, "%2d", sensor_data.humidity);
+			OLED_BOOL_DrawStr(72, 48, (uint8_t*) buffer, 0x00);
+
+			// 可选：显示数据计数
+			// OLED_BOOL_DrawStr(64, 32, (uint8_t*)"     ", 0x00);
+			// sprintf(buffer, "D:%03lu", data_count);
+			// OLED_BOOL_DrawStr(64, 32, (uint8_t*)buffer, 0x00);
+		} else {
+			// 无新数据时显示"--"
+			OLED_BOOL_DrawStr(8, 48, (uint8_t*) "--", 0x00);
+			OLED_BOOL_DrawStr(72, 48, (uint8_t*) "--", 0x00);
+
+		}
+
 		OLED_Refresh();
-
-		// 500ms延迟，改成两秒
 		osDelay(1000);
 	}
+
   /* USER CODE END StartDisplayTask */
 }
 
-/* USER CODE BEGIN Header_Producer_Task */
+/* USER CODE BEGIN Header_Sensor_Task */
 /**
- * @brief Function implementing the Producer thread.
+ * @brief Function implementing the Sensor_Task1 thread.
  * @param argument: Not used
  * @retval None
  */
-/* USER CODE END Header_Producer_Task */
-void Producer_Task(void *argument)
+/* USER CODE END Header_Sensor_Task */
+void Sensor_Task(void *argument)
 {
-  /* USER CODE BEGIN Producer_Task */
-	uint32_t send_data = 0;
+  /* USER CODE BEGIN Sensor_Task */
 
-	/* Infinite loop */
-	for (;;) {
-		send_data++;
+	DHT11_Data_t sensor_data;
+	uint8_t read_status;
 
-		// 使用CMSIS-RTOS V2的队列API
-		osMessageQueuePut(dataQueueHandle, &send_data, 0, pdMS_TO_TICKS(10));
-
-		osDelay(1000);
-	}
-  /* USER CODE END Producer_Task */
-}
-
-/* USER CODE BEGIN Header_Consumer_Task */
-/**
- * @brief Function implementing the Consumer thread.
- * @param argument: Not used
- * @retval None
- */
-/* USER CODE END Header_Consumer_Task */
-void Consumer_Task(void *argument)
-{
-  /* USER CODE BEGIN Consumer_Task */
-	uint32_t recv_data = 0;
-	char buffer[32];
-
-//	OLED_BOOL_DrawStr(0, 32, (unit8_t*)"Queue: Waiting", 0x00);
-//	OLED_Refresh();
-	uint32_t count = 0;  // 用于记录收到了多少个数据
-
-	/* Infinite loop */
-	for (;;) {
-		// 等待队列数据
-		if (osMessageQueueGet(dataQueueHandle, &recv_data, NULL, osWaitForever)
-				== osOK) {
-			count++;
-
-			// 方案A：在OLED固定位置显示（不覆盖原有显示）
-			// 在屏幕右下角显示队列数据
-			sprintf(buffer, "Q:%lu", recv_data);
-			OLED_BOOL_DrawStr(0, 48, (uint8_t*) buffer, 0x00);  // 右下角位置
-
-			// 方案B：用LED闪烁次数表示数据值
-			// 收到数据时LED快速闪烁recv_data%3+1次
-			for (int i = 0; i < (recv_data % 3) + 1; i++) {
-				HAL_GPIO_TogglePin(LED_GPIO_Port, LED_Pin);
-				osDelay(100);
-				HAL_GPIO_TogglePin(LED_GPIO_Port, LED_Pin);
-				if (i < (recv_data % 3))
-					osDelay(100);  // 闪烁间隔
-			}
+	// 初始化DHT11
+	if (DHT11_Init() != 0) {
+		// 初始化失败：快速闪烁LED然后任务结束
+		for (int i = 0; i < 10; i++) {
+			HAL_GPIO_TogglePin(LED_GPIO_Port, LED_Pin);
+			osDelay(100);
 		}
+		osThreadTerminate(osThreadGetId());
+		return;
 	}
-  /* USER CODE END Consumer_Task */
+
+	// 初始化成功：慢闪3次
+	for (int i = 0; i < 3; i++) {
+		HAL_GPIO_WritePin(LED_GPIO_Port, LED_Pin, GPIO_PIN_RESET);
+		osDelay(300);
+		HAL_GPIO_WritePin(LED_GPIO_Port, LED_Pin, GPIO_PIN_SET);
+		osDelay(300);
+	}
+
+	for (;;) {
+		// 读取DHT11
+		read_status = DHT11_Read(&sensor_data);
+
+		if (read_status == 0) {  // 读取成功
+			// 发送到队列
+			osMessageQueuePut(sensorQueueHandle, &sensor_data, 0, 0);
+		}
+
+		// DHT11需要至少1秒间隔
+		osDelay(2000);
+	}
+
+  /* USER CODE END Sensor_Task */
 }
 
 /* Private application code --------------------------------------------------*/

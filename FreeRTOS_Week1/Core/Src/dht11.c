@@ -128,7 +128,7 @@ uint8_t DHT11_Init(void) {
     return DHT11_Start();
 }
 
-// 读取温湿度数据
+ //读取温湿度数据
 uint8_t DHT11_Read(DHT11_Data_t* data) {
     if(data == NULL) return 1;
 
@@ -162,3 +162,5 @@ uint8_t DHT11_Read(DHT11_Data_t* data) {
 
     return 0;
 }
+
+

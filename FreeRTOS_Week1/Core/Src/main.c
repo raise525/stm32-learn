@@ -28,6 +28,7 @@
 /* USER CODE BEGIN Includes */
 #include "ssd1306.h"  // 添加这行
 #include "i2c.h"      // 可能也需要
+#include "dht11.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -71,7 +72,9 @@ int main(void)
 {
 
   /* USER CODE BEGIN 1 */
-
+//	DHT11_Data_t dht11_data;
+//	uint8_t dht11_status;
+//	uint32_t test_count = 0;
   /* USER CODE END 1 */
 
   /* MCU Configuration--------------------------------------------------------*/
@@ -95,13 +98,16 @@ int main(void)
   MX_I2C1_Init();
   /* USER CODE BEGIN 2 */
   // 在这里添加OLED测试代码
-  OLED_Init(hi2c1);
-  OLED_Fill(0x00);
-  OLED_BOOL_DrawStr(0, 0, (uint8_t*)"OLED Test OK", OLED_BOOL_Replace);
-  OLED_Refresh();
-  HAL_Delay(2000);
-  OLED_Fill(0x00);
-  OLED_Refresh();
+//  OLED_Init(hi2c1);
+//  OLED_Fill(0x00);
+//  OLED_BOOL_DrawStr(0, 0, (uint8_t*)"OLED Test OK", OLED_BOOL_Replace);
+//  OLED_Refresh();
+//  HAL_Delay(2000);
+//  OLED_Fill(0x00);
+//  OLED_Refresh();
+
+
+
   /* USER CODE END 2 */
 
   /* Init scheduler */
@@ -117,12 +123,11 @@ int main(void)
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
-  while (1)
-  {
+	while (1) {
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
-  }
+	}
   /* USER CODE END 3 */
 }
 
