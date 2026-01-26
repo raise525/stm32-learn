@@ -22,6 +22,7 @@
 #include "main.h"
 #include "cmsis_os.h"
 #include "i2c.h"
+#include "usart.h"
 #include "gpio.h"
 
 /* Private includes ----------------------------------------------------------*/
@@ -29,6 +30,7 @@
 #include "ssd1306.h"  // 添加这行
 #include "i2c.h"      // 可能也需要
 #include "dht11.h"
+#include <stdio.h>
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -62,6 +64,13 @@ void MX_FREERTOS_Init(void);
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
 extern I2C_HandleTypeDef hi2c1;
+
+int _write(int file, char *ptr, int len)
+{
+    HAL_UART_Transmit(&huart1, (uint8_t*)ptr, len, HAL_MAX_DELAY);
+    return len;
+}
+
 /* USER CODE END 0 */
 
 /**
@@ -96,6 +105,7 @@ int main(void)
   /* Initialize all configured peripherals */
   MX_GPIO_Init();
   MX_I2C1_Init();
+  MX_USART1_UART_Init();
   /* USER CODE BEGIN 2 */
   // 在这里添加OLED测试代码
 //  OLED_Init(hi2c1);
@@ -106,7 +116,30 @@ int main(void)
 //  OLED_Fill(0x00);
 //  OLED_Refresh();
 
+  // 等待串口稳定
+      HAL_Delay(100);
 
+      // 重要：测试浮点数输出
+      printf("\r\n\r\n================================\r\n");
+      printf("STM32F103 UART 测试程序\r\n");
+      printf("编译时间: %s %s\r\n", __DATE__, __TIME__);
+      printf("================================\r\n\r\n");
+
+      // 测试整数
+      printf("整数测试: %d\r\n", 1234);
+
+      // 关键：测试浮点数（验证配置是否正确）
+      float pi = 3.14159f;
+      printf("浮点数测试: PI = %.4f\r\n", pi);
+
+      // 模拟DHT11数据
+      float temperature = 25.5f;
+      float humidity = 60.3f;
+      printf("模拟DHT11数据:\r\n");
+      printf("  温度: %.1f°C\r\n", temperature);
+      printf("  湿度: %.1f%%\r\n", humidity);
+
+      printf("=== 测试完成，启动FreeRTOS ===\r\n\r\n");
 
   /* USER CODE END 2 */
 
