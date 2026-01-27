@@ -58,30 +58,19 @@ extern osMessageQueueId_t sensorQueueHandle;
 /* USER CODE END Variables */
 /* Definitions for Task_LED */
 osThreadId_t Task_LEDHandle;
-const osThreadAttr_t Task_LED_attributes = {
-  .name = "Task_LED",
-  .stack_size = 128 * 4,
-  .priority = (osPriority_t) osPriorityNormal,
-};
+const osThreadAttr_t Task_LED_attributes = { .name = "Task_LED", .stack_size =
+		128 * 4, .priority = (osPriority_t) osPriorityNormal, };
 /* Definitions for Task_Display */
 osThreadId_t Task_DisplayHandle;
-const osThreadAttr_t Task_Display_attributes = {
-  .name = "Task_Display",
-  .stack_size = 256 * 4,
-  .priority = (osPriority_t) osPriorityNormal,
-};
+const osThreadAttr_t Task_Display_attributes = { .name = "Task_Display",
+		.stack_size = 256 * 4, .priority = (osPriority_t) osPriorityNormal, };
 /* Definitions for Sensor_Task1 */
 osThreadId_t Sensor_Task1Handle;
-const osThreadAttr_t Sensor_Task1_attributes = {
-  .name = "Sensor_Task1",
-  .stack_size = 256 * 4,
-  .priority = (osPriority_t) osPriorityNormal,
-};
+const osThreadAttr_t Sensor_Task1_attributes = { .name = "Sensor_Task1",
+		.stack_size = 256 * 4, .priority = (osPriority_t) osPriorityNormal, };
 /* Definitions for sensorQueue */
 osMessageQueueId_t sensorQueueHandle;
-const osMessageQueueAttr_t sensorQueue_attributes = {
-  .name = "sensorQueue"
-};
+const osMessageQueueAttr_t sensorQueue_attributes = { .name = "sensorQueue" };
 
 /* Private function prototypes -----------------------------------------------*/
 /* USER CODE BEGIN FunctionPrototypes */
@@ -95,55 +84,57 @@ void Sensor_Task(void *argument);
 void MX_FREERTOS_Init(void); /* (MISRA C 2004 rule 8.1) */
 
 /**
-  * @brief  FreeRTOS initialization
-  * @param  None
-  * @retval None
-  */
+ * @brief  FreeRTOS initialization
+ * @param  None
+ * @retval None
+ */
 void MX_FREERTOS_Init(void) {
-  /* USER CODE BEGIN Init */
+	/* USER CODE BEGIN Init */
 
 	// 初始化LED为灭
 	HAL_GPIO_WritePin(LED_GPIO_Port, LED_Pin, GPIO_PIN_SET);
 
-  /* USER CODE END Init */
+	/* USER CODE END Init */
 
-  /* USER CODE BEGIN RTOS_MUTEX */
+	/* USER CODE BEGIN RTOS_MUTEX */
 	/* add mutexes, ... */
-  /* USER CODE END RTOS_MUTEX */
+	/* USER CODE END RTOS_MUTEX */
 
-  /* USER CODE BEGIN RTOS_SEMAPHORES */
+	/* USER CODE BEGIN RTOS_SEMAPHORES */
 	/* add semaphores, ... */
-  /* USER CODE END RTOS_SEMAPHORES */
+	/* USER CODE END RTOS_SEMAPHORES */
 
-  /* USER CODE BEGIN RTOS_TIMERS */
+	/* USER CODE BEGIN RTOS_TIMERS */
 	/* start timers, add new ones, ... */
-  /* USER CODE END RTOS_TIMERS */
+	/* USER CODE END RTOS_TIMERS */
 
-  /* Create the queue(s) */
-  /* creation of sensorQueue */
-  sensorQueueHandle = osMessageQueueNew (5, 8, &sensorQueue_attributes);
+	/* Create the queue(s) */
+	/* creation of sensorQueue */
+	sensorQueueHandle = osMessageQueueNew(5, 8, &sensorQueue_attributes);
 
-  /* USER CODE BEGIN RTOS_QUEUES */
+	/* USER CODE BEGIN RTOS_QUEUES */
 	/* add queues, ... */
-  /* USER CODE END RTOS_QUEUES */
+	/* USER CODE END RTOS_QUEUES */
 
-  /* Create the thread(s) */
-  /* creation of Task_LED */
-  Task_LEDHandle = osThreadNew(StartLEDTask, NULL, &Task_LED_attributes);
+	/* Create the thread(s) */
+	/* creation of Task_LED */
+	Task_LEDHandle = osThreadNew(StartLEDTask, NULL, &Task_LED_attributes);
 
-  /* creation of Task_Display */
-  Task_DisplayHandle = osThreadNew(StartDisplayTask, NULL, &Task_Display_attributes);
+	/* creation of Task_Display */
+	Task_DisplayHandle = osThreadNew(StartDisplayTask, NULL,
+			&Task_Display_attributes);
 
-  /* creation of Sensor_Task1 */
-  Sensor_Task1Handle = osThreadNew(Sensor_Task, NULL, &Sensor_Task1_attributes);
+	/* creation of Sensor_Task1 */
+	Sensor_Task1Handle = osThreadNew(Sensor_Task, NULL,
+			&Sensor_Task1_attributes);
 
-  /* USER CODE BEGIN RTOS_THREADS */
+	/* USER CODE BEGIN RTOS_THREADS */
 	/* add threads, ... */
-  /* USER CODE END RTOS_THREADS */
+	/* USER CODE END RTOS_THREADS */
 
-  /* USER CODE BEGIN RTOS_EVENTS */
+	/* USER CODE BEGIN RTOS_EVENTS */
 	/* add events, ... */
-  /* USER CODE END RTOS_EVENTS */
+	/* USER CODE END RTOS_EVENTS */
 
 }
 
@@ -154,9 +145,8 @@ void MX_FREERTOS_Init(void) {
  * @retval None
  */
 /* USER CODE END Header_StartLEDTask */
-void StartLEDTask(void *argument)
-{
-  /* USER CODE BEGIN StartLEDTask */
+void StartLEDTask(void *argument) {
+	/* USER CODE BEGIN StartLEDTask */
 
 	// 启动后先亮1秒表示系统启动
 	HAL_GPIO_WritePin(LED_GPIO_Port, LED_Pin, GPIO_PIN_RESET);
@@ -183,7 +173,7 @@ void StartLEDTask(void *argument)
 //
 //		osDelay(2000);
 //	}
-  /* USER CODE END StartLEDTask */
+	/* USER CODE END StartLEDTask */
 }
 
 /* USER CODE BEGIN Header_StartDisplayTask */
@@ -193,14 +183,12 @@ void StartLEDTask(void *argument)
  * @retval None
  */
 /* USER CODE END Header_StartDisplayTask */
-void StartDisplayTask(void *argument)
-{
-  /* USER CODE BEGIN StartDisplayTask */
+void StartDisplayTask(void *argument) {
+	/* USER CODE BEGIN StartDisplayTask */
 	DHT11_Data_t sensor_data;
 	char buffer[32];
 	uint32_t display_counter = 0;
 	//uint32_t data_count = 0;
-
 
 // 等待系统稳定
 	osDelay(800);
@@ -263,7 +251,7 @@ void StartDisplayTask(void *argument)
 		osDelay(1000);
 	}
 
-  /* USER CODE END StartDisplayTask */
+	/* USER CODE END StartDisplayTask */
 }
 
 /* USER CODE BEGIN Header_Sensor_Task */
@@ -273,16 +261,19 @@ void StartDisplayTask(void *argument)
  * @retval None
  */
 /* USER CODE END Header_Sensor_Task */
-void Sensor_Task(void *argument)
-{
-  /* USER CODE BEGIN Sensor_Task */
+void Sensor_Task(void *argument) {
+	/* USER CODE BEGIN Sensor_Task */
 
 	DHT11_Data_t sensor_data;
 	uint8_t read_status;
+	uint32_t read_count = 0;
+	uint32_t success_count = 0;
+	uint32_t fail_count = 0;
 
 	// 初始化DHT11
 	if (DHT11_Init() != 0) {
 		// 初始化失败：快速闪烁LED然后任务结束
+		printf("[DHT11] Initialization failed!\n");
 		for (int i = 0; i < 10; i++) {
 			HAL_GPIO_TogglePin(LED_GPIO_Port, LED_Pin);
 			osDelay(100);
@@ -292,6 +283,7 @@ void Sensor_Task(void *argument)
 	}
 
 	// 初始化成功：慢闪3次
+	printf("[DHT11] Initialization successful\n");
 	for (int i = 0; i < 3; i++) {
 		HAL_GPIO_WritePin(LED_GPIO_Port, LED_Pin, GPIO_PIN_RESET);
 		osDelay(300);
@@ -302,17 +294,36 @@ void Sensor_Task(void *argument)
 	for (;;) {
 		// 读取DHT11
 		read_status = DHT11_Read(&sensor_data);
+		read_count++;
 
-		if (read_status == 0) {  // 读取成功
+		if (read_status == 0) {
+			// 读取成功
+			success_count++;
 			// 发送到队列
 			osMessageQueuePut(sensorQueueHandle, &sensor_data, 0, 0);
+
+			// 第3天核心：输出到串口
+			uint32_t current_time = HAL_GetTick();
+			printf(
+					"[%6lu] #%4lu | Temp: %5.1fC | Humi: %3d%% | OK:%3lu | Fail:%3lu\n",
+					current_time, read_count, sensor_data.temperature,  // float
+					sensor_data.humidity,         // uint8_t
+					success_count, fail_count);
+		} else {
+			// 读取失败
+			fail_count++;
+			uint32_t current_time = HAL_GetTick();
+			printf(
+					"[%6lu] #%4lu | DHT11 read failed (error: %d) | OK:%3lu | Fail:%3lu\n",
+					current_time, read_count, read_status, success_count,
+					fail_count);
 		}
 
 		// DHT11需要至少1秒间隔
 		osDelay(2000);
 	}
 
-  /* USER CODE END Sensor_Task */
+	/* USER CODE END Sensor_Task */
 }
 
 /* Private application code --------------------------------------------------*/

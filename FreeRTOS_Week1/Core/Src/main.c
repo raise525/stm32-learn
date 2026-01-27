@@ -119,27 +119,23 @@ int main(void)
   // 等待串口稳定
       HAL_Delay(100);
 
-      // 重要：测试浮点数输出
-      printf("\r\n\r\n================================\r\n");
-      printf("STM32F103 UART 测试程序\r\n");
-      printf("编译时间: %s %s\r\n", __DATE__, __TIME__);
+      // 把中文全部改为英文
+      printf("\r\n\r\n");
+      printf("================================\r\n");
+      printf("  STM32F103 UART Test Program\r\n");
+      printf("  Compiled: %s %s\r\n", __DATE__, __TIME__);
       printf("================================\r\n\r\n");
 
-      // 测试整数
-      printf("整数测试: %d\r\n", 1234);
+      printf("Integer test: %d\r\n", 1234);
+      printf("Float test: PI = %.4f\r\n", 3.14159f);
 
-      // 关键：测试浮点数（验证配置是否正确）
-      float pi = 3.14159f;
-      printf("浮点数测试: PI = %.4f\r\n", pi);
-
-      // 模拟DHT11数据
       float temperature = 25.5f;
       float humidity = 60.3f;
-      printf("模拟DHT11数据:\r\n");
-      printf("  温度: %.1f°C\r\n", temperature);
-      printf("  湿度: %.1f%%\r\n", humidity);
+      printf("DHT11 Simulation:\r\n");
+      printf("  Temperature: %.1fC\r\n", temperature);
+      printf("  Humidity: %.1f%%\r\n", humidity);
 
-      printf("=== 测试完成，启动FreeRTOS ===\r\n\r\n");
+      printf("=== Test Complete, Starting FreeRTOS ===\r\n\r\n");
 
   /* USER CODE END 2 */
 
