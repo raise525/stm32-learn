@@ -31,6 +31,7 @@
 #include <stdio.h>
 #include <string.h>
 #include "dht11.h"
+#include "usart.h"  // 添加这行，包含huart1的声明
 
 /* USER CODE END Includes */
 
@@ -54,6 +55,7 @@
 
 extern I2C_HandleTypeDef hi2c1;
 extern osMessageQueueId_t sensorQueueHandle;
+extern UART_HandleTypeDef huart1;  // 添加这行，声明外部变量
 
 /* USER CODE END Variables */
 /* Definitions for Task_LED */
@@ -71,9 +73,15 @@ const osThreadAttr_t Sensor_Task1_attributes = { .name = "Sensor_Task1",
 /* Definitions for sensorQueue */
 osMessageQueueId_t sensorQueueHandle;
 const osMessageQueueAttr_t sensorQueue_attributes = { .name = "sensorQueue" };
+/* Definitions for uartMutex */
+osMutexId_t uartMutexHandle;
+const osMutexAttr_t uartMutex_attributes = { .name = "uartMutex" };
 
 /* Private function prototypes -----------------------------------------------*/
 /* USER CODE BEGIN FunctionPrototypes */
+
+// 声明safe_printf函数
+void safe_printf(const char *format, ...);
 
 /* USER CODE END FunctionPrototypes */
 
@@ -95,6 +103,9 @@ void MX_FREERTOS_Init(void) {
 	HAL_GPIO_WritePin(LED_GPIO_Port, LED_Pin, GPIO_PIN_SET);
 
 	/* USER CODE END Init */
+	/* Create the mutex(es) */
+	/* creation of uartMutex */
+	uartMutexHandle = osMutexNew(&uartMutex_attributes);
 
 	/* USER CODE BEGIN RTOS_MUTEX */
 	/* add mutexes, ... */
@@ -273,7 +284,7 @@ void Sensor_Task(void *argument) {
 	// 初始化DHT11
 	if (DHT11_Init() != 0) {
 		// 初始化失败：快速闪烁LED然后任务结束
-		printf("[DHT11] Initialization failed!\n");
+		safe_printf("[DHT11] Initialization failed!\n");
 		for (int i = 0; i < 10; i++) {
 			HAL_GPIO_TogglePin(LED_GPIO_Port, LED_Pin);
 			osDelay(100);
@@ -283,7 +294,7 @@ void Sensor_Task(void *argument) {
 	}
 
 	// 初始化成功：慢闪3次
-	printf("[DHT11] Initialization successful\n");
+	safe_printf("[DHT11] Initialization successful\n");
 	for (int i = 0; i < 3; i++) {
 		HAL_GPIO_WritePin(LED_GPIO_Port, LED_Pin, GPIO_PIN_RESET);
 		osDelay(300);
@@ -304,19 +315,28 @@ void Sensor_Task(void *argument) {
 
 			// 第3天核心：输出到串口
 			uint32_t current_time = HAL_GetTick();
-			printf(
+			safe_printf(
 					"[%6lu] #%4lu | Temp: %5.1fC | Humi: %3d%% | OK:%3lu | Fail:%3lu\n",
 					current_time, read_count, sensor_data.temperature,  // float
 					sensor_data.humidity,         // uint8_t
 					success_count, fail_count);
+//			printf(
+//								"[%6lu] #%4lu | Temp: %5.1fC | Humi: %3d%% | OK:%3lu | Fail:%3lu\n",
+//								current_time, read_count, sensor_data.temperature,  // float
+//								sensor_data.humidity,         // uint8_t
+//								success_count, fail_count);
 		} else {
 			// 读取失败
 			fail_count++;
 			uint32_t current_time = HAL_GetTick();
-			printf(
+			safe_printf(
 					"[%6lu] #%4lu | DHT11 read failed (error: %d) | OK:%3lu | Fail:%3lu\n",
 					current_time, read_count, read_status, success_count,
 					fail_count);
+//			printf(
+//								"[%6lu] #%4lu | DHT11 read failed (error: %d) | OK:%3lu | Fail:%3lu\n",
+//								current_time, read_count, read_status, success_count,
+//								fail_count);
 		}
 
 		// DHT11需要至少1秒间隔
@@ -328,6 +348,35 @@ void Sensor_Task(void *argument) {
 
 /* Private application code --------------------------------------------------*/
 /* USER CODE BEGIN Application */
+
+#include <stdarg.h>  // 需要这个头文件
+
+/*
+ * 这是一个自定义的printf函数，用法和printf完全一样
+ */
+// 安全打印函数（线程安全）
+void safe_printf(const char *format, ...) {
+
+//	const char *format: 格式化字符串（类似printf的第一个参数）
+//	...: 可变参数，表示可以接受不定数量的参数
+	char buffer[128];   // 临时缓冲区，存放格式化后的字符串
+	va_list args;       // 可变参数列表对象
+
+	// 尝试获取互斥锁（等待最多100ms）
+	if (osMutexAcquire(uartMutexHandle, 100) == osOK) {
+		// 格式化字符串
+		va_start(args, format);      // 初始化参数列表
+		vsnprintf(buffer, sizeof(buffer), format, args);   // 格式化到buffer
+		va_end(args);               // 清理参数列表
+
+		// 发送到串口
+		HAL_UART_Transmit(&huart1, (uint8_t*) buffer, strlen(buffer),
+				HAL_MAX_DELAY);
+
+		// 释放互斥锁
+		osMutexRelease(uartMutexHandle);
+	}
+}
 
 /* USER CODE END Application */
 

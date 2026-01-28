@@ -71,6 +71,9 @@ int _write(int file, char *ptr, int len)
     return len;
 }
 
+// 声明safe_printf（因为main.c中也要用）
+void safe_printf(const char *format, ...);
+
 /* USER CODE END 0 */
 
 /**
@@ -119,23 +122,23 @@ int main(void)
   // 等待串口稳定
       HAL_Delay(100);
 
-      // 把中文全部改为英文
-      printf("\r\n\r\n");
-      printf("================================\r\n");
-      printf("  STM32F103 UART Test Program\r\n");
-      printf("  Compiled: %s %s\r\n", __DATE__, __TIME__);
-      printf("================================\r\n\r\n");
+      // 原来的printf都改为safe_printf
+      safe_printf("\r\n\r\n");
+      safe_printf("================================\r\n");
+      safe_printf("  STM32F103 UART Test Program\r\n");
+      safe_printf("  Compiled: %s %s\r\n", __DATE__, __TIME__);
+      safe_printf("================================\r\n\r\n");
 
-      printf("Integer test: %d\r\n", 1234);
-      printf("Float test: PI = %.4f\r\n", 3.14159f);
+      safe_printf("Integer test: %d\r\n", 1234);
+      safe_printf("Float test: PI = %.4f\r\n", 3.14159f);
 
       float temperature = 25.5f;
       float humidity = 60.3f;
-      printf("DHT11 Simulation:\r\n");
-      printf("  Temperature: %.1fC\r\n", temperature);
-      printf("  Humidity: %.1f%%\r\n", humidity);
+      safe_printf("DHT11 Simulation:\r\n");
+      safe_printf("  Temperature: %.1fC\r\n", temperature);
+      safe_printf("  Humidity: %.1f%%\r\n", humidity);
 
-      printf("=== Test Complete, Starting FreeRTOS ===\r\n\r\n");
+      safe_printf("=== Test Complete, Starting FreeRTOS ===\r\n\r\n");
 
   /* USER CODE END 2 */
 
