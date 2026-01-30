@@ -2,21 +2,21 @@
 //STMicroelectronics版权声明
 //包含必要的许可证信息
 /**
-  ******************************************************************************
-  * @file           : main.c
-  * @brief          : Main program body
-  ******************************************************************************
-  * @attention
-  *
-  * Copyright (c) 2026 STMicroelectronics.
-  * All rights reserved.
-  *
-  * This software is licensed under terms that can be found in the LICENSE file
-  * in the root directory of this software component.
-  * If no LICENSE file comes with this software, it is provided AS-IS.
-  *
-  ******************************************************************************
-  */
+ ******************************************************************************
+ * @file           : main.c
+ * @brief          : Main program body
+ ******************************************************************************
+ * @attention
+ *
+ * Copyright (c) 2026 STMicroelectronics.
+ * All rights reserved.
+ *
+ * This software is licensed under terms that can be found in the LICENSE file
+ * in the root directory of this software component.
+ * If no LICENSE file comes with this software, it is provided AS-IS.
+ *
+ ******************************************************************************
+ */
 /* USER CODE END Header */
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
@@ -65,10 +65,9 @@ void MX_FREERTOS_Init(void);
 /* USER CODE BEGIN 0 */
 extern I2C_HandleTypeDef hi2c1;
 
-int _write(int file, char *ptr, int len)
-{
-    HAL_UART_Transmit(&huart1, (uint8_t*)ptr, len, HAL_MAX_DELAY);
-    return len;
+int _write(int file, char *ptr, int len) {
+	HAL_UART_Transmit(&huart1, (uint8_t*) ptr, len, HAL_MAX_DELAY);
+	return len;
 }
 
 // 声明safe_printf（因为main.c中也要用）
@@ -110,7 +109,7 @@ int main(void)
   MX_I2C1_Init();
   MX_USART1_UART_Init();
   /* USER CODE BEGIN 2 */
-  // 在这里添加OLED测试代码
+	// 在这里添加OLED测试代码
 //  OLED_Init(hi2c1);
 //  OLED_Fill(0x00);
 //  OLED_BOOL_DrawStr(0, 0, (uint8_t*)"OLED Test OK", OLED_BOOL_Replace);
@@ -118,27 +117,42 @@ int main(void)
 //  HAL_Delay(2000);
 //  OLED_Fill(0x00);
 //  OLED_Refresh();
+// 等待串口稳定
+	HAL_Delay(100);
 
-  // 等待串口稳定
-      HAL_Delay(100);
+	// 原来的printf都改为safe_printf
+//      safe_printf("\r\n\r\n");
+//      safe_printf("================================\r\n");
+//      safe_printf("  STM32F103 UART Test Program\r\n");
+//      safe_printf("  Compiled: %s %s\r\n", __DATE__, __TIME__);
+//      safe_printf("================================\r\n\r\n");
+//
+//      safe_printf("Integer test: %d\r\n", 1234);
+//      safe_printf("Float test: PI = %.4f\r\n", 3.14159f);
+//
+//      float temperature = 25.5f;
+//      float humidity = 60.3f;
+//      safe_printf("DHT11 Simulation:\r\n");
+//      safe_printf("  Temperature: %.1fC\r\n", temperature);
+//      safe_printf("  Humidity: %.1f%%\r\n", humidity);
+//
+//      safe_printf("=== Test Complete, Starting FreeRTOS ===\r\n\r\n");
+	printf("\r\n\r\n");
+	printf("================================\r\n");
+	printf("  STM32F103 UART Test Program\r\n");
+	printf("  Compiled: %s %s\r\n", __DATE__, __TIME__);
+	printf("================================\r\n\r\n");
 
-      // 原来的printf都改为safe_printf
-      safe_printf("\r\n\r\n");
-      safe_printf("================================\r\n");
-      safe_printf("  STM32F103 UART Test Program\r\n");
-      safe_printf("  Compiled: %s %s\r\n", __DATE__, __TIME__);
-      safe_printf("================================\r\n\r\n");
+	printf("Integer test: %d\r\n", 1234);
+	printf("Float test: PI = %.4f\r\n", 3.14159f);
 
-      safe_printf("Integer test: %d\r\n", 1234);
-      safe_printf("Float test: PI = %.4f\r\n", 3.14159f);
+	float temperature = 25.5f;
+	float humidity = 60.3f;
+	printf("DHT11 Simulation:\r\n");
+	printf("  Temperature: %.1fC\r\n", temperature);
+	printf("  Humidity: %.1f%%\r\n", humidity);
 
-      float temperature = 25.5f;
-      float humidity = 60.3f;
-      safe_printf("DHT11 Simulation:\r\n");
-      safe_printf("  Temperature: %.1fC\r\n", temperature);
-      safe_printf("  Humidity: %.1f%%\r\n", humidity);
-
-      safe_printf("=== Test Complete, Starting FreeRTOS ===\r\n\r\n");
+	printf("=== Test Complete, Starting FreeRTOS ===\r\n\r\n");
 
   /* USER CODE END 2 */
 
@@ -213,11 +227,10 @@ void SystemClock_Config(void)
 void Error_Handler(void)
 {
   /* USER CODE BEGIN Error_Handler_Debug */
-  /* User can add his own implementation to report the HAL error return state */
-  __disable_irq();
-  while (1)
-  {
-  }
+	/* User can add his own implementation to report the HAL error return state */
+	__disable_irq();
+	while (1) {
+	}
   /* USER CODE END Error_Handler_Debug */
 }
 

@@ -18,6 +18,7 @@
 /* USER CODE END Header */
 
 /* Includes ------------------------------------------------------------------*/
+#include <mpu6050.h>
 #include "FreeRTOS.h"
 #include "task.h"
 #include "main.h"
@@ -32,6 +33,8 @@
 #include <string.h>
 #include "dht11.h"
 #include "usart.h"  // 添加这行，包含huart1的声明
+#include <stdarg.h>  // 需要这个头文件
+
 
 /* USER CODE END Includes */
 
@@ -56,6 +59,7 @@
 extern I2C_HandleTypeDef hi2c1;
 extern osMessageQueueId_t sensorQueueHandle;
 extern UART_HandleTypeDef huart1;  // 添加这行，声明外部变量
+MPU6050_t mpu_data;
 
 /* USER CODE END Variables */
 /* Definitions for Task_LED */
@@ -70,6 +74,10 @@ const osThreadAttr_t Task_Display_attributes = { .name = "Task_Display",
 osThreadId_t Sensor_Task1Handle;
 const osThreadAttr_t Sensor_Task1_attributes = { .name = "Sensor_Task1",
 		.stack_size = 256 * 4, .priority = (osPriority_t) osPriorityNormal, };
+/* Definitions for IMU */
+osThreadId_t IMUHandle;
+const osThreadAttr_t IMU_attributes = { .name = "IMU", .stack_size = 512 * 4,
+		.priority = (osPriority_t) osPriorityNormal, };
 /* Definitions for sensorQueue */
 osMessageQueueId_t sensorQueueHandle;
 const osMessageQueueAttr_t sensorQueue_attributes = { .name = "sensorQueue" };
@@ -88,6 +96,7 @@ void safe_printf(const char *format, ...);
 void StartLEDTask(void *argument);
 void StartDisplayTask(void *argument);
 void Sensor_Task(void *argument);
+void IMU_Task(void *argument);
 
 void MX_FREERTOS_Init(void); /* (MISRA C 2004 rule 8.1) */
 
@@ -138,6 +147,9 @@ void MX_FREERTOS_Init(void) {
 	/* creation of Sensor_Task1 */
 	Sensor_Task1Handle = osThreadNew(Sensor_Task, NULL,
 			&Sensor_Task1_attributes);
+
+	/* creation of IMU */
+	IMUHandle = osThreadNew(IMU_Task, NULL, &IMU_attributes);
 
 	/* USER CODE BEGIN RTOS_THREADS */
 	/* add threads, ... */
@@ -284,7 +296,8 @@ void Sensor_Task(void *argument) {
 	// 初始化DHT11
 	if (DHT11_Init() != 0) {
 		// 初始化失败：快速闪烁LED然后任务结束
-		safe_printf("[DHT11] Initialization failed!\n");
+		//safe_printf("[DHT11] Initialization failed!\n");
+		printf("[DHT11] Initialization failed!\n");
 		for (int i = 0; i < 10; i++) {
 			HAL_GPIO_TogglePin(LED_GPIO_Port, LED_Pin);
 			osDelay(100);
@@ -294,7 +307,8 @@ void Sensor_Task(void *argument) {
 	}
 
 	// 初始化成功：慢闪3次
-	safe_printf("[DHT11] Initialization successful\n");
+//	safe_printf("[DHT11] Initialization successful\n");
+	printf("[DHT11] Initialization successful\n");
 	for (int i = 0; i < 3; i++) {
 		HAL_GPIO_WritePin(LED_GPIO_Port, LED_Pin, GPIO_PIN_RESET);
 		osDelay(300);
@@ -315,28 +329,28 @@ void Sensor_Task(void *argument) {
 
 			// 第3天核心：输出到串口
 			uint32_t current_time = HAL_GetTick();
-			safe_printf(
+//			safe_printf(
+//					"[%6lu] #%4lu | Temp: %5.1fC | Humi: %3d%% | OK:%3lu | Fail:%3lu\n",
+//					current_time, read_count, sensor_data.temperature,  // float
+//					sensor_data.humidity,         // uint8_t
+//					success_count, fail_count);
+			printf(
 					"[%6lu] #%4lu | Temp: %5.1fC | Humi: %3d%% | OK:%3lu | Fail:%3lu\n",
 					current_time, read_count, sensor_data.temperature,  // float
 					sensor_data.humidity,         // uint8_t
 					success_count, fail_count);
-//			printf(
-//								"[%6lu] #%4lu | Temp: %5.1fC | Humi: %3d%% | OK:%3lu | Fail:%3lu\n",
-//								current_time, read_count, sensor_data.temperature,  // float
-//								sensor_data.humidity,         // uint8_t
-//								success_count, fail_count);
 		} else {
 			// 读取失败
 			fail_count++;
 			uint32_t current_time = HAL_GetTick();
-			safe_printf(
+//			safe_printf(
+//					"[%6lu] #%4lu | DHT11 read failed (error: %d) | OK:%3lu | Fail:%3lu\n",
+//					current_time, read_count, read_status, success_count,
+//					fail_count);
+			printf(
 					"[%6lu] #%4lu | DHT11 read failed (error: %d) | OK:%3lu | Fail:%3lu\n",
 					current_time, read_count, read_status, success_count,
 					fail_count);
-//			printf(
-//								"[%6lu] #%4lu | DHT11 read failed (error: %d) | OK:%3lu | Fail:%3lu\n",
-//								current_time, read_count, read_status, success_count,
-//								fail_count);
 		}
 
 		// DHT11需要至少1秒间隔
@@ -346,10 +360,72 @@ void Sensor_Task(void *argument) {
 	/* USER CODE END Sensor_Task */
 }
 
+/* USER CODE BEGIN Header_IMU_Task */
+/**
+ * @brief Function implementing the IMU thread.
+ * @param argument: Not used
+ * @retval None
+ */
+/* USER CODE END Header_IMU_Task */
+void IMU_Task(void *argument) {
+	/* USER CODE BEGIN IMU_Task */
+
+	printf("[IMU] MPU6050任务启动...\r\n");
+	printf("[IMU] 尝试初始化MPU6050...\r\n");
+
+	/* 初始化MPU6050 */
+	uint8_t init_result = MPU6050_Init(&hi2c1);
+
+	if (init_result != 0) {
+		printf("[ERROR] MPU6050初始化失败！错误码：%d\r\n", init_result);
+		printf("[提示] 请检查：\r\n");
+		printf("  1. I2C连接 (SCL-PB6, SDA-PB7)\r\n");
+		printf("  2. MPU6050电源 (VCC-3.3V, GND-GND)\r\n");
+		printf("  3. AD0引脚 (接地=0x68)\r\n");
+		vTaskDelete(NULL);
+	}
+
+	printf("[IMU] MPU6050初始化成功！\r\n");
+	printf("[IMU] 开始读取传感器数据...\r\n\r\n");
+
+	/* Infinite loop */
+	for (;;) {
+		/* 读取所有传感器数据 */
+		MPU6050_Read_All(&hi2c1, &mpu_data);
+
+		/* 输出到串口 - 格式化显示 */
+		printf("┌─────────────────────────────┐\r\n");
+		printf("│        MPU6050 数据         │\r\n");
+		printf("├─────────────────────────────┤\r\n");
+
+		// 加速度数据
+		printf("│ 加速度 (g)                  │\r\n");
+		printf("│   X: %+6.3f  Y: %+6.3f      │\r\n", mpu_data.Ax, mpu_data.Ay);
+		printf("│   Z: %+6.3f                 │\r\n", mpu_data.Az);
+
+		// 陀螺仪数据
+		printf("│ 陀螺仪 (°/s)                │\r\n");
+		printf("│   X: %+7.2f  Y: %+7.2f      │\r\n", mpu_data.Gx, mpu_data.Gy);
+		printf("│   Z: %+7.2f                 │\r\n", mpu_data.Gz);
+
+		// 温度
+		printf("│ 温度: %6.1f°C               │\r\n", mpu_data.Temperature);
+
+		// 卡尔曼滤波角度
+		printf("│ 角度 (°)                    │\r\n");
+		printf("│   Roll(X): %+6.2f           │\r\n", mpu_data.KalmanAngleX);
+		printf("│   Pitch(Y): %+6.2f          │\r\n", mpu_data.KalmanAngleY);
+
+		printf("└─────────────────────────────┘\r\n\r\n");
+
+		/* 延迟1秒 */
+		vTaskDelay(1000);
+	}
+	/* USER CODE END IMU_Task */
+}
+
 /* Private application code --------------------------------------------------*/
 /* USER CODE BEGIN Application */
-
-#include <stdarg.h>  // 需要这个头文件
 
 /*
  * 这是一个自定义的printf函数，用法和printf完全一样
@@ -371,7 +447,7 @@ void safe_printf(const char *format, ...) {
 
 		// 发送到串口
 		HAL_UART_Transmit(&huart1, (uint8_t*) buffer, strlen(buffer),
-				HAL_MAX_DELAY);
+		HAL_MAX_DELAY);
 
 		// 释放互斥锁
 		osMutexRelease(uartMutexHandle);
