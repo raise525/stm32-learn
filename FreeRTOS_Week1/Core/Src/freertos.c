@@ -132,7 +132,7 @@ void MX_FREERTOS_Init(void) {
 	/* USER CODE END Init */
 	/* Create the mutex(es) */
 	/* creation of uartMutex */
-	uartMutexHandle = osMutexNew(&uartMutex_attributes);
+	//uartMutexHandle = osMutexNew(&uartMutex_attributes);
 
 	/* USER CODE BEGIN RTOS_MUTEX */
 	/* add mutexes, ... */
@@ -151,14 +151,14 @@ void MX_FREERTOS_Init(void) {
 	sensorQueueHandle = osMessageQueueNew(5, 8, &sensorQueue_attributes);
 
 	/* creation of DHT11DataQueue */
-	DHT11DataQueueHandle = osMessageQueueNew(5, 48, &DHT11DataQueue_attributes);
+	//DHT11DataQueueHandle = osMessageQueueNew(5, 48, &DHT11DataQueue_attributes);
 
 	/* creation of MPU6050DataQueue */
-	MPU6050DataQueueHandle = osMessageQueueNew(5, 48,
-			&MPU6050DataQueue_attributes);
+//	MPU6050DataQueueHandle = osMessageQueueNew(5, 48,
+//			&MPU6050DataQueue_attributes);
 
 	/* creation of FusedDataQueue */
-	FusedDataQueueHandle = osMessageQueueNew(5, 48, &FusedDataQueue_attributes);
+	//FusedDataQueueHandle = osMessageQueueNew(5, 48, &FusedDataQueue_attributes);
 
 	/* USER CODE BEGIN RTOS_QUEUES */
 	/* add queues, ... */
@@ -177,11 +177,11 @@ void MX_FREERTOS_Init(void) {
 			&Sensor_Task1_attributes);
 
 	/* creation of IMU */
-	IMUHandle = osThreadNew(IMU_Task, NULL, &IMU_attributes);
+//	IMUHandle = osThreadNew(IMU_Task, NULL, &IMU_attributes);
 
 	/* creation of DataFusion */
-	DataFusionHandle = osThreadNew(DataFusion_Task, NULL,
-			&DataFusion_attributes);
+//	DataFusionHandle = osThreadNew(DataFusion_Task, NULL,
+//			&DataFusion_attributes);
 
 	/* USER CODE BEGIN RTOS_THREADS */
 	/* add threads, ... */
@@ -203,6 +203,7 @@ void MX_FREERTOS_Init(void) {
 void StartLEDTask(void *argument) {
 	/* USER CODE BEGIN StartLEDTask */
 
+	printf("初始化成功！！！！！！\n\n");
 	// 启动后先亮1秒表示系统启动
 	HAL_GPIO_WritePin(LED_GPIO_Port, LED_Pin, GPIO_PIN_RESET);
 	osDelay(1000);
@@ -359,85 +360,56 @@ void Sensor_Task(void *argument) {
 			// 读取成功
 			success_count++;
 			// 发送到队列
-			osMessageQueuePut(sensorQueueHandle, &sensor_data, 0, 0);
+			osMessageQueuePut(sensorQueueHandle, &sensor_data, 0, 0);//突然不太懂这句话是啥意思，这个句柄是正确的吗？
 
-//			// 第3天核心：输出到串口
-//			uint32_t current_time = HAL_GetTick();
-//			safe_printf(
-//					"[%6lu] #%4lu | Temp: %5.1fC | Humi: %3d%% | OK:%3lu | Fail:%3lu\n\n",
-//					current_time, read_count, sensor_data.temperature,  // float
-//					sensor_data.humidity,         // uint8_t
-//					success_count, fail_count);
-//			printf(
-//					"[%6lu] #%4lu | Temp: %5.1fC | Humi: %3d%% | OK:%3lu | Fail:%3lu\n",
-//					current_time, read_count, sensor_data.temperature,  // float
-//					sensor_data.humidity,         // uint8_t
-//					success_count, fail_count);
-
-			sensor_packet.temperature_c = sensor_data.temperature;
-			sensor_packet.humidity = sensor_data.humidity;
-			sensor_packet.dht_status = 0;
-
-			sensor_packet.accel_x = 0.0f;
-			sensor_packet.accel_y = 0.0f;
-			sensor_packet.accel_z = 0.0f;
-			sensor_packet.gyro_x = 0.0f;
-			sensor_packet.gyro_y = 0.0f;
-			sensor_packet.gyro_z = 0.0f;
-			sensor_packet.imu_temp_c = 0.0f;
-			sensor_packet.imu_status = 0;
-
-			sensor_packet.timestamp_ms = HAL_GetTick();
-			sensor_packet.packet_id = packet_counter++;
-
-			osStatus_t queue_status = osMessageQueuePut(DHT11DataQueueHandle,
-					&sensor_packet, 0, 0);
-
-			if (queue_status == osOK) {
-				safe_printf("[DHT11] 数据包 %lu 已发送到队列\n",
-						sensor_packet.packet_id);
-			} else {
-				safe_printf("[DHT11] 错误： 无法发送数据包到队列（状态：%d）\n", queue_status);
-			}
-
+			// 第3天核心：输出到串口
 			uint32_t current_time = HAL_GetTick();
 			safe_printf(
-					"[%6lu] #%4lu | Temp: %5.1fC | Humi:%3d%% | OK:%3lu | Fail:%3lu | 已发送到队列\n\n",
-					current_time, read_count, sensor_data.temperature,
-					sensor_data.humidity, success_count, fail_count);
+					"[%6lu] #%4lu | Temp: %5.1fC | Humi: %3d%% | OK:%3lu | Fail:%3lu\n\n",
+					current_time, read_count, sensor_data.temperature,  // float
+					sensor_data.humidity,         // uint8_t
+					success_count, fail_count);
+			printf(
+					"[%6lu] #%4lu | Temp: %5.1fC | Humi: %3d%% | OK:%3lu | Fail:%3lu\n",
+					current_time, read_count, sensor_data.temperature,  // float
+					sensor_data.humidity,         // uint8_t
+					success_count, fail_count);
 
-		} else {
-//			// 读取失败
-//			fail_count++;
+//			sensor_packet.temperature_c = sensor_data.temperature;
+//			sensor_packet.humidity = sensor_data.humidity;
+//			sensor_packet.dht_status = 0;
+//
+//			sensor_packet.accel_x = 0.0f;
+//			sensor_packet.accel_y = 0.0f;
+//			sensor_packet.accel_z = 0.0f;
+//			sensor_packet.gyro_x = 0.0f;
+//			sensor_packet.gyro_y = 0.0f;
+//			sensor_packet.gyro_z = 0.0f;
+//			sensor_packet.imu_temp_c = 0.0f;
+//			sensor_packet.imu_status = 0;
+//
+//			sensor_packet.timestamp_ms = HAL_GetTick();
+//			sensor_packet.packet_id = packet_counter++;
+//
+//			osStatus_t queue_status = osMessageQueuePut(DHT11DataQueueHandle,
+//					&sensor_packet, 0, 0);
+//
+//			if (queue_status == osOK) {
+//				safe_printf("[DHT11] 数据包 %lu 已发送到队列\n",
+//						sensor_packet.packet_id);
+//			} else {
+//				safe_printf("[DHT11] 错误： 无法发送数据包到队列（状态：%d）\n", queue_status);
+//			}
+//
 //			uint32_t current_time = HAL_GetTick();
 //			safe_printf(
-//					"[%6lu] #%4lu | DHT11 read failed (error: %d) | OK:%3lu | Fail:%3lu\n\n",
-//					current_time, read_count, read_status, success_count,
-//					fail_count);
-//			printf(
-//					"[%6lu] #%4lu | DHT11 read failed (error: %d) | OK:%3lu | Fail:%3lu\n",
-//					current_time, read_count, read_status, success_count,
-//					fail_count);
+//					"[%6lu] #%4lu | Temp: %5.1fC | Humi:%3d%% | OK:%3lu | Fail:%3lu | 已发送到队列\n\n",
+//					current_time, read_count, sensor_data.temperature,
+//					sensor_data.humidity, success_count, fail_count);
 
+		} else {
+			// 读取失败
 			fail_count++;
-			sensor_packet.temperature_c = 0.0f;
-			sensor_packet.humidity = 0;
-			sensor_packet.dht_status = read_status;
-
-			sensor_packet.accel_x = 0.0f;
-			sensor_packet.accel_y = 0.0f;
-			sensor_packet.accel_z = 0.0f;
-			sensor_packet.gyro_x = 0.0f;
-			sensor_packet.gyro_y = 0.0f;
-			sensor_packet.gyro_z = 0.0f;
-			sensor_packet.imu_temp_c = 0.0f;
-			sensor_packet.imu_status = 0;
-
-			sensor_packet.timestamp_ms = HAL_GetTick();
-			sensor_packet.packet_id = packet_counter++;
-
-			osMessageQueuePut(DHT11DataQueueHandle, &sensor_packet, 0, 0);
-
 			uint32_t current_time = HAL_GetTick();
 			safe_printf(
 					"[%6lu] #%4lu | DHT11 read failed (error: %d) | OK:%3lu | Fail:%3lu\n\n",
@@ -447,6 +419,35 @@ void Sensor_Task(void *argument) {
 					"[%6lu] #%4lu | DHT11 read failed (error: %d) | OK:%3lu | Fail:%3lu\n",
 					current_time, read_count, read_status, success_count,
 					fail_count);
+
+//			fail_count++;
+//			sensor_packet.temperature_c = 0.0f;
+//			sensor_packet.humidity = 0;
+//			sensor_packet.dht_status = read_status;
+//
+//			sensor_packet.accel_x = 0.0f;
+//			sensor_packet.accel_y = 0.0f;
+//			sensor_packet.accel_z = 0.0f;
+//			sensor_packet.gyro_x = 0.0f;
+//			sensor_packet.gyro_y = 0.0f;
+//			sensor_packet.gyro_z = 0.0f;
+//			sensor_packet.imu_temp_c = 0.0f;
+//			sensor_packet.imu_status = 0;
+//
+//			sensor_packet.timestamp_ms = HAL_GetTick();
+//			sensor_packet.packet_id = packet_counter++;
+//
+//			osMessageQueuePut(DHT11DataQueueHandle, &sensor_packet, 0, 0);
+//
+//			uint32_t current_time = HAL_GetTick();
+//			safe_printf(
+//					"[%6lu] #%4lu | DHT11 read failed (error: %d) | OK:%3lu | Fail:%3lu\n\n",
+//					current_time, read_count, read_status, success_count,
+//					fail_count);
+//			printf(
+//					"[%6lu] #%4lu | DHT11 read failed (error: %d) | OK:%3lu | Fail:%3lu\n",
+//					current_time, read_count, read_status, success_count,
+//					fail_count);
 
 		}
 
@@ -467,8 +468,8 @@ void Sensor_Task(void *argument) {
 void IMU_Task(void *argument) {
 	/* USER CODE BEGIN IMU_Task */
 
-	printf("[DEBUG] sizeof(sensor_data_t) = %d bytes\r\n",
-			(int) sizeof(sensor_data_t));
+//	printf("[DEBUG] sizeof(sensor_data_t) = %d bytes\r\n",
+//			(int) sizeof(sensor_data_t));
 
 	printf("[IMU] MPU6050任务启动...\r\n");
 	printf("[IMU] 尝试初始化MPU6050...\r\n");
@@ -488,8 +489,8 @@ void IMU_Task(void *argument) {
 	printf("[IMU] MPU6050初始化成功！\r\n");
 	printf("[IMU] 开始读取传感器数据...\r\n\r\n");
 
-	sensor_data_t sensor_packet;
-	static uint32_t packet_counter = 0;
+//	sensor_data_t sensor_packet;
+//	static uint32_t packet_counter = 0;
 
 	/* Infinite loop */
 	for (;;) {
@@ -521,48 +522,48 @@ void IMU_Task(void *argument) {
 //
 //		printf("└─────────────────────────────┘\r\n\r\n");
 
-//		// 简洁单行格式（只显示关键数据）
-//		safe_printf(
-//				"[IMU] Acc: %5.2f %5.2f %5.2f g | Gyro: %6.1f %6.1f %6.1f °/s | Temp: %4.1f°C | Ang: %5.1f %5.1f°\r\n\n",
-//				mpu_data.Ax, mpu_data.Ay, mpu_data.Az,  // 加速度 XYZ
-//				mpu_data.Gx, mpu_data.Gy, mpu_data.Gz,  // 陀螺仪 XYZ
-//				mpu_data.Temperature,                   // 温度
-//				mpu_data.KalmanAngleX, mpu_data.KalmanAngleY); // 角度
-
-		// 1. 填充MPU6050数据
-		sensor_packet.accel_x = mpu_data.Ax;
-		sensor_packet.accel_y = mpu_data.Ay;
-		sensor_packet.accel_z = mpu_data.Az;
-		sensor_packet.gyro_x = mpu_data.Gx;
-		sensor_packet.gyro_y = mpu_data.Gy;
-		sensor_packet.gyro_z = mpu_data.Gz;
-		sensor_packet.imu_temp_c = mpu_data.Temperature;
-		sensor_packet.imu_status = 0;  // 正常状态
-
-		// 2. DHT11字段先填0或默认值（因为没有DHT11数据）
-		sensor_packet.temperature_c = 0.0f;
-		sensor_packet.humidity = 0;
-		sensor_packet.dht_status = 255;  // 255表示无DHT11数据
-
-		// 3. 填充时间和包ID
-		sensor_packet.timestamp_ms = HAL_GetTick();
-		sensor_packet.packet_id = packet_counter++;
-
-		// 4. 发送到MPU6050队列
-		osStatus_t queue_status = osMessageQueuePut(MPU6050DataQueueHandle,
-				&sensor_packet, 0, 0);
-
-		if (queue_status == osOK) {
-			safe_printf("[MPU6050] 数据包 %lu 已发送到队列\n", sensor_packet.packet_id);
-		} else {
-			safe_printf("[MPU6050] 错误：无法发送数据包到队列（状态: %d）\n", queue_status);
-		}
-
+		// 简洁单行格式（只显示关键数据）
 		safe_printf(
-				"[MPU6050] Acc: %5.2f %5.2f %5.2f g | Gyro: %6.1f %6.1f %6.1f °/s | Temp: %4.1f°C | 已发送到队列\n\n",
+				"[IMU] Acc: %5.2f %5.2f %5.2f g | Gyro: %6.1f %6.1f %6.1f °/s | Temp: %4.1f°C | Ang: %5.1f %5.1f°\r\n\n",
 				mpu_data.Ax, mpu_data.Ay, mpu_data.Az,  // 加速度 XYZ
 				mpu_data.Gx, mpu_data.Gy, mpu_data.Gz,  // 陀螺仪 XYZ
-				mpu_data.Temperature);                   // 温度
+				mpu_data.Temperature,                   // 温度
+				mpu_data.KalmanAngleX, mpu_data.KalmanAngleY); // 角度
+
+//		// 1. 填充MPU6050数据
+//		sensor_packet.accel_x = mpu_data.Ax;
+//		sensor_packet.accel_y = mpu_data.Ay;
+//		sensor_packet.accel_z = mpu_data.Az;
+//		sensor_packet.gyro_x = mpu_data.Gx;
+//		sensor_packet.gyro_y = mpu_data.Gy;
+//		sensor_packet.gyro_z = mpu_data.Gz;
+//		sensor_packet.imu_temp_c = mpu_data.Temperature;
+//		sensor_packet.imu_status = 0;  // 正常状态
+//
+//		// 2. DHT11字段先填0或默认值（因为没有DHT11数据）
+//		sensor_packet.temperature_c = 0.0f;
+//		sensor_packet.humidity = 0;
+//		sensor_packet.dht_status = 255;  // 255表示无DHT11数据
+//
+//		// 3. 填充时间和包ID
+//		sensor_packet.timestamp_ms = HAL_GetTick();
+//		sensor_packet.packet_id = packet_counter++;
+//
+//		// 4. 发送到MPU6050队列
+//		osStatus_t queue_status = osMessageQueuePut(MPU6050DataQueueHandle,
+//				&sensor_packet, 0, 0);
+//
+//		if (queue_status == osOK) {
+//			safe_printf("[MPU6050] 数据包 %lu 已发送到队列\n", sensor_packet.packet_id);
+//		} else {
+//			safe_printf("[MPU6050] 错误：无法发送数据包到队列（状态: %d）\n", queue_status);
+//		}
+//
+//		safe_printf(
+//				"[MPU6050] Acc: %5.2f %5.2f %5.2f g | Gyro: %6.1f %6.1f %6.1f °/s | Temp: %4.1f°C | 已发送到队列\n\n",
+//				mpu_data.Ax, mpu_data.Ay, mpu_data.Az,  // 加速度 XYZ
+//				mpu_data.Gx, mpu_data.Gy, mpu_data.Gz,  // 陀螺仪 XYZ
+//				mpu_data.Temperature);                   // 温度
 
 		/* 延迟1秒 */
 		vTaskDelay(1000);
@@ -580,132 +581,132 @@ void IMU_Task(void *argument) {
 void DataFusion_Task(void *argument) {
 	/* USER CODE BEGIN DataFusion_Task */
 
-	sensor_data_t dht11_packet;
-	sensor_data_t mpu6050_packet;
-	sensor_data_t fused_packet;
-
-	osStatus_t dht11_status;
-	osStatus_t mpu6050_status;
-
-	uint32_t dht11_timeout = 100;
-	uint32_t mpu6050_timeout = 50;
-
-	uint32_t fusion_counter = 0;
-	uint32_t last_print_time = 0;
-	uint32_t print_interval = 2000;
-
-	printf("[DataFusion] 数据融合任务启动！ \n\n");
-	printf("[DataFusion] 等待传感器数据···\n\n");
-
-	memset(&dht11_packet, 0, sizeof(dht11_packet));
-	memset(&mpu6050_packet, 0, sizeof(mpu6050_packet));
-
-	/* Infinite loop */
-	for (;;) {
-
-		dht11_status = osMessageQueueGet(DHT11DataQueueHandle, &dht11_packet,
-		NULL, dht11_timeout);
-		mpu6050_status = osMessageQueueGet(MPU6050DataQueueHandle,
-				&mpu6050_packet, NULL, mpu6050_timeout);
-
-		uint32_t current_time = HAL_GetTick();
-
-		if (dht11_status == osOK || mpu6050_status == osOK) {
-			fusion_counter++;
-
-			memset(&fused_packet, 0, sizeof(fused_packet));
-
-			if (dht11_status == osOK) {
-				fused_packet.temperature_c = dht11_packet.temperature_c;
-				fused_packet.humidity = dht11_packet.humidity;
-				fused_packet.dht_status = dht11_packet.dht_status;
-			} else {
-				fused_packet.temperature_c = 0.0;
-				fused_packet.humidity = 0;
-				fused_packet.dht_status = 255;
-			}
-
-			if (mpu6050_status == osOK) {
-				fused_packet.accel_x = mpu6050_packet.accel_x;
-				fused_packet.accel_y = mpu6050_packet.accel_y;
-				fused_packet.accel_z = mpu6050_packet.accel_z;
-				fused_packet.gyro_x = mpu6050_packet.gyro_x;
-				fused_packet.gyro_y = mpu6050_packet.gyro_y;
-				fused_packet.gyro_z = mpu6050_packet.gyro_z;
-				fused_packet.imu_temp_c = mpu6050_packet.imu_temp_c;
-				fused_packet.imu_status = mpu6050_packet.imu_status;
-			} else {
-				// 未收到MPU6050数据
-				fused_packet.accel_x = 0.0f;
-				fused_packet.accel_y = 0.0f;
-				fused_packet.accel_z = 0.0f;
-				fused_packet.gyro_x = 0.0f;
-				fused_packet.gyro_y = 0.0f;
-				fused_packet.gyro_z = 0.0f;
-				fused_packet.imu_temp_c = 0.0f;
-				fused_packet.imu_status = 255;  // 255表示数据不可用
-			}
-
-			fused_packet.timestamp_ms = current_time;
-			fused_packet.packet_id = fusion_counter;
-
-			osStatus_t fused_status = osMessageQueuePut(FusedDataQueueHandle,
-					&fused_packet, 0, 0);
-
-			if (fused_status != osOK) {
-				safe_printf("[DataFusion] 警告：融合数据发送失败（状态：%d）\n", fused_status);
-			}
-
-			if (current_time - last_print_time > print_interval) {
-				last_print_time = current_time;
-
-				safe_printf(
-						"\n=================== 融合数据包 #%lu ===================\n",
-						fusion_counter);
-				safe_printf("时间戳: %lu ms\n", fused_packet.timestamp_ms);
-
-				// DHT11数据
-				if (fused_packet.dht_status == 0) {
-					safe_printf("DHT11  | 温度: %5.1f°C | 湿度: %3d%% | 状态: 正常\n",
-							fused_packet.temperature_c, fused_packet.humidity);
-				} else if (fused_packet.dht_status == 255) {
-					safe_printf("DHT11  | 数据: 不可用 | 状态: 等待数据\n");
-				} else {
-					safe_printf("DHT11  | 数据: 错误 | 状态码: %d\n",
-							fused_packet.dht_status);
-				}
-
-				// MPU6050数据
-				if (fused_packet.imu_status == 0) {
-					safe_printf("MPU6050| 加速度: X:%+6.3f Y:%+6.3f Z:%+6.3f g\n",
-							fused_packet.accel_x, fused_packet.accel_y,
-							fused_packet.accel_z);
-					safe_printf(
-							"       | 陀螺仪: X:%+7.2f Y:%+7.2f Z:%+7.2f °/s\n",
-							fused_packet.gyro_x, fused_packet.gyro_y,
-							fused_packet.gyro_z);
-					safe_printf("       | IMU温度: %5.1f°C\n",
-							fused_packet.imu_temp_c);
-				} else if (fused_packet.imu_status == 255) {
-					safe_printf("MPU6050| 数据: 不可用 | 状态: 等待数据\n");
-				} else {
-					safe_printf("MPU6050| 数据: 错误 | 状态码: %d\n",
-							fused_packet.imu_status);
-				}
-
-				// 数据来源统计
-				safe_printf("接收状态 | DHT11: %s | MPU6050: %s\n",
-						(dht11_status == osOK) ? "✓" : "✗",
-						(mpu6050_status == osOK) ? "✓" : "✗");
-				safe_printf(
-						"===================================================\n\n");
-			}
-		} else {
-
-			// 两个队列都没有数据，稍微延迟一下
-			osDelay(1000);
-		}
-	}
+//	sensor_data_t dht11_packet;
+//	sensor_data_t mpu6050_packet;
+//	sensor_data_t fused_packet;
+//
+//	osStatus_t dht11_status;
+//	osStatus_t mpu6050_status;
+//
+//	uint32_t dht11_timeout = 100;
+//	uint32_t mpu6050_timeout = 50;
+//
+//	uint32_t fusion_counter = 0;
+//	uint32_t last_print_time = 0;
+//	uint32_t print_interval = 2000;
+//
+//	printf("[DataFusion] 数据融合任务启动！ \n\n");
+//	printf("[DataFusion] 等待传感器数据···\n\n");
+//
+//	memset(&dht11_packet, 0, sizeof(dht11_packet));
+//	memset(&mpu6050_packet, 0, sizeof(mpu6050_packet));
+//
+//	/* Infinite loop */
+//	for (;;) {
+//
+//		dht11_status = osMessageQueueGet(DHT11DataQueueHandle, &dht11_packet,
+//		NULL, dht11_timeout);
+//		mpu6050_status = osMessageQueueGet(MPU6050DataQueueHandle,
+//				&mpu6050_packet, NULL, mpu6050_timeout);
+//
+//		uint32_t current_time = HAL_GetTick();
+//
+//		if (dht11_status == osOK || mpu6050_status == osOK) {
+//			fusion_counter++;
+//
+//			memset(&fused_packet, 0, sizeof(fused_packet));
+//
+//			if (dht11_status == osOK) {
+//				fused_packet.temperature_c = dht11_packet.temperature_c;
+//				fused_packet.humidity = dht11_packet.humidity;
+//				fused_packet.dht_status = dht11_packet.dht_status;
+//			} else {
+//				fused_packet.temperature_c = 0.0;
+//				fused_packet.humidity = 0;
+//				fused_packet.dht_status = 255;
+//			}
+//
+//			if (mpu6050_status == osOK) {
+//				fused_packet.accel_x = mpu6050_packet.accel_x;
+//				fused_packet.accel_y = mpu6050_packet.accel_y;
+//				fused_packet.accel_z = mpu6050_packet.accel_z;
+//				fused_packet.gyro_x = mpu6050_packet.gyro_x;
+//				fused_packet.gyro_y = mpu6050_packet.gyro_y;
+//				fused_packet.gyro_z = mpu6050_packet.gyro_z;
+//				fused_packet.imu_temp_c = mpu6050_packet.imu_temp_c;
+//				fused_packet.imu_status = mpu6050_packet.imu_status;
+//			} else {
+//				// 未收到MPU6050数据
+//				fused_packet.accel_x = 0.0f;
+//				fused_packet.accel_y = 0.0f;
+//				fused_packet.accel_z = 0.0f;
+//				fused_packet.gyro_x = 0.0f;
+//				fused_packet.gyro_y = 0.0f;
+//				fused_packet.gyro_z = 0.0f;
+//				fused_packet.imu_temp_c = 0.0f;
+//				fused_packet.imu_status = 255;  // 255表示数据不可用
+//			}
+//
+//			fused_packet.timestamp_ms = current_time;
+//			fused_packet.packet_id = fusion_counter;
+//
+//			osStatus_t fused_status = osMessageQueuePut(FusedDataQueueHandle,
+//					&fused_packet, 0, 0);
+//
+//			if (fused_status != osOK) {
+//				safe_printf("[DataFusion] 警告：融合数据发送失败（状态：%d）\n", fused_status);
+//			}
+//
+//			if (current_time - last_print_time > print_interval) {
+//				last_print_time = current_time;
+//
+//				safe_printf(
+//						"\n=================== 融合数据包 #%lu ===================\n",
+//						fusion_counter);
+//				safe_printf("时间戳: %lu ms\n", fused_packet.timestamp_ms);
+//
+//				// DHT11数据
+//				if (fused_packet.dht_status == 0) {
+//					safe_printf("DHT11  | 温度: %5.1f°C | 湿度: %3d%% | 状态: 正常\n",
+//							fused_packet.temperature_c, fused_packet.humidity);
+//				} else if (fused_packet.dht_status == 255) {
+//					safe_printf("DHT11  | 数据: 不可用 | 状态: 等待数据\n");
+//				} else {
+//					safe_printf("DHT11  | 数据: 错误 | 状态码: %d\n",
+//							fused_packet.dht_status);
+//				}
+//
+//				// MPU6050数据
+//				if (fused_packet.imu_status == 0) {
+//					safe_printf("MPU6050| 加速度: X:%+6.3f Y:%+6.3f Z:%+6.3f g\n",
+//							fused_packet.accel_x, fused_packet.accel_y,
+//							fused_packet.accel_z);
+//					safe_printf(
+//							"       | 陀螺仪: X:%+7.2f Y:%+7.2f Z:%+7.2f °/s\n",
+//							fused_packet.gyro_x, fused_packet.gyro_y,
+//							fused_packet.gyro_z);
+//					safe_printf("       | IMU温度: %5.1f°C\n",
+//							fused_packet.imu_temp_c);
+//				} else if (fused_packet.imu_status == 255) {
+//					safe_printf("MPU6050| 数据: 不可用 | 状态: 等待数据\n");
+//				} else {
+//					safe_printf("MPU6050| 数据: 错误 | 状态码: %d\n",
+//							fused_packet.imu_status);
+//				}
+//
+//				// 数据来源统计
+//				safe_printf("接收状态 | DHT11: %s | MPU6050: %s\n",
+//						(dht11_status == osOK) ? "✓" : "✗",
+//						(mpu6050_status == osOK) ? "✓" : "✗");
+//				safe_printf(
+//						"===================================================\n\n");
+//			}
+//		} else {
+//
+//			// 两个队列都没有数据，稍微延迟一下
+//			osDelay(1000);
+//		}
+//	}
 	/* USER CODE END DataFusion_Task */
 }
 
