@@ -1,0 +1,126 @@
+<html>
+<body>
+<pre>
+<h1>µVision Build Log</h1>
+<h2>Tool Versions:</h2>
+IDE-Version: ¦ÌVision V5.43.1.0
+Copyright (C) 2025 ARM Ltd and ARM Germany GmbH. All rights reserved.
+License Information: 1 Raise, 1, LIC=53CT9-NYV79-G97G3-NSZUN-K0DQJ-A2N6D
+ 
+Tool Versions:
+Toolchain:       MDK-ARM Community  Version: 5.43.0.0
+Toolchain Path:  D:\Program Files\keil\ARM\ARM_Compiler_5.06u7\Bin
+C Compiler:      Armcc.exe V5.06 update 7 (build 960)
+Assembler:       Armasm.exe V5.06 update 7 (build 960)
+Linker/Locator:  ArmLink.exe V5.06 update 7 (build 960)
+Library Manager: ArmAr.exe V5.06 update 7 (build 960)
+Hex Converter:   FromElf.exe V5.06 update 7 (build 960)
+CPU DLL:         SARMCM3.DLL V5.43.0.0
+Dialog DLL:      DCM.DLL V1.17.5.0
+Target DLL:      STLink\ST-LINKIII-KEIL_SWO.dll V3.3.1.0
+Dialog DLL:      TCM.DLL V1.56.6.0
+ 
+<h2>Project:</h2>
+D:\stm32-learn\CAR_REG\CAR_REG.uvprojx
+Project File Date:  03/25/2026
+
+<h2>Output:</h2>
+*** Using Compiler 'V5.06 update 7 (build 960)', folder: 'D:\Program Files\keil\ARM\ARM_Compiler_5.06u7\Bin'
+Build target 'Target_1'
+compiling Dri_ADC.c...
+compiling Int_TB6612.c...
+compiling Com_Filter.c...
+compiling oled.c...
+.\Dri\Dri_SPI.h(25): warning:  #1-D: last line of file ends without a newline
+  #endif
+Int\OLED\oled.c(399): warning:  #223-D: function "for_delay_ms" declared implicitly
+  	for_delay_ms(200);
+Int\OLED\oled.c: 2 warnings, 0 errors
+compiling croutine.c...
+compiling system_stm32f10x.c...
+compiling APP_Car.c...
+.\Dri\Dri_I2C.h(29): warning:  #1-D: last line of file ends without a newline
+  #endif
+App\APP_Car.c(31): warning:  #223-D: function "printf" declared implicitly
+      printf("accel_angle = %.1f\r\n", accel_angle);
+App\APP_Car.c(34): warning:  #1-D: last line of file ends without a newline
+  }
+App\APP_Car.c: 3 warnings, 0 errors
+compiling Int_Encoder.c...
+Int\Int_Encoder.c(47): warning:  #1-D: last line of file ends without a newline
+  }
+Int\Int_Encoder.c: 1 warning, 0 errors
+compiling Dri_TIM.c...
+compiling Dri_I2C.c...
+Dri\Dri_I2C.h(29): warning:  #1-D: last line of file ends without a newline
+  #endif
+Dri\Dri_I2C.c: 1 warning, 0 errors
+compiling Dri_SPI.c...
+Dri\Dri_SPI.h(25): warning:  #1-D: last line of file ends without a newline
+  #endif
+Dri\Dri_SPI.c(35): warning:  #177-D: variable "rByte"  was declared but never referenced
+      uint8_t rByte = 0x00;
+Dri\Dri_SPI.c: 2 warnings, 0 errors
+compiling Dri_USART1.c...
+compiling Int_MPU6050.c...
+.\Dri\Dri_I2C.h(29): warning:  #1-D: last line of file ends without a newline
+  #endif
+Int\Int_MPU6050.c(113): warning:  #1294-D: Old-style function Int_MPU6050_Set_DLPF_CFG
+  void Int_MPU6050_Set_DLPF_CFG(rate)
+Int\Int_MPU6050.c(113): warning:  #1079-D: standard requires that parameter "rate"  be given a type by a subsequent declaration ("int" assumed)
+  void Int_MPU6050_Set_DLPF_CFG(rate)
+Int\Int_MPU6050.c(189): warning:  #223-D: function "for_delay_ms" declared implicitly
+      for_delay_ms(300);
+Int\Int_MPU6050.c(193): warning:  #223-D: function "Int_MPU6050_WritaByte" declared implicitly
+      Int_MPU6050_WritaByte(MPU_GYRO_CFG_REG, 3 << 3);
+Int\Int_MPU6050.c(259): warning:  #1-D: last line of file ends without a newline
+  }
+Int\Int_MPU6050.c: 6 warnings, 0 errors
+compiling list.c...
+compiling core_cm3.c...
+compiling event_groups.c...
+compiling main.c...
+.\Dri\Dri_I2C.h(29): warning:  #1-D: last line of file ends without a newline
+  #endif
+User\main.c(37): warning:  #177-D: variable "gx"  was declared but never referenced
+      short gx=0,gy=0,gz=0;
+User\main.c(37): warning:  #177-D: variable "gy"  was declared but never referenced
+      short gx=0,gy=0,gz=0;
+User\main.c(37): warning:  #177-D: variable "gz"  was declared but never referenced
+      short gx=0,gy=0,gz=0;
+User\main.c(38): warning:  #177-D: variable "ax"  was declared but never referenced
+      short ax=0,ay=0,az=0;
+User\main.c(38): warning:  #177-D: variable "ay"  was declared but never referenced
+      short ax=0,ay=0,az=0;
+User\main.c(38): warning:  #177-D: variable "az"  was declared but never referenced
+      short ax=0,ay=0,az=0;
+User\main.c: 7 warnings, 0 errors
+compiling queue.c...
+compiling timers.c...
+compiling stream_buffer.c...
+compiling heap_4.c...
+compiling tasks.c...
+compiling port.c...
+linking...
+.\Objects\CAR_REG.axf: Error: L6218E: Undefined symbol Int_MPU6050_WritaByte (referred from int_mpu6050.o).
+Not enough information to list image symbols.
+Not enough information to list load addresses in the image map.
+Finished: 2 information, 0 warning and 1 error messages.
+".\Objects\CAR_REG.axf" - 1 Error(s), 22 Warning(s).
+
+<h2>Software Packages used:</h2>
+
+Package Vendor: Keil
+                https://www.keil.com/pack/Keil.STM32F1xx_DFP.2.4.1.pack
+                Keil::STM32F1xx_DFP@2.4.1
+                STMicroelectronics STM32F1 Series Device Support, Drivers and Examples
+
+<h2>Collection of Component include folders:</h2>
+  D:/Program Files/keil/ARM/Packs/Keil/STM32F1xx_DFP/2.4.1/Device/Include
+
+<h2>Collection of Component Files used:</h2>
+Target not created.
+Build Time Elapsed:  00:00:01
+</pre>
+</body>
+</html>
