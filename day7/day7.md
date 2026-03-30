@@ -13,7 +13,7 @@
 
 **真正需要你100%理解的是：如何使用它。** 例如，知道调用 `HAL_GPIO_WritePin(GPIOA, GPIO_PIN_5, GPIO_PIN_SET)` 就能把PA5引脚设置为高电平。
 
-![alt text](image.png)
+![alt text](中断架构图.png)
 
 硬件还没到，就先水一水吧，下载了串口助手，可能还要下载驱动
 
