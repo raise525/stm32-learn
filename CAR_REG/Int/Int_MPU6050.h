@@ -79,6 +79,8 @@ void Int_MPU6050_Get_Gyro(short *gx, short *gy, short *gz);
 
 void Int_MPU6050_Get_Accel(short *ax, short *ay, short *az);
 
+void test_whoami(void);
+
 #endif
 
 

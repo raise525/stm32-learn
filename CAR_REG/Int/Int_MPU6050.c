@@ -190,10 +190,10 @@ void Int_MPU6050_Init(void)
     Int_MPU6050_WriteByte(MPU_PWR_MGMT1_REG, 0X00);
 
     /* 3.陀螺仪量程 +-2000°/s， frs=3*/
-    Int_MPU6050_WritaByte(MPU_GYRO_CFG_REG, 3 << 3);
+    Int_MPU6050_WriteByte(MPU_GYRO_CFG_REG, 3 << 3);
 
     /* 4.加速度量程*/
-    Int_MPU6050_WritaByte(MPU_ACCEL_CFG_REG, 0 << 3);
+    Int_MPU6050_WriteByte(MPU_ACCEL_CFG_REG, 0 << 3);
 
     /* 5.其他功能设置（可选）： FIFO， 第二IIC，中断，都是在MPU6050上面的，我们只需要用IIC，其他的就关闭*/
     Int_MPU6050_WriteByte(MPU_INT_EN_REG, 0X00); //关闭所有中断
@@ -203,7 +203,7 @@ void Int_MPU6050_Init(void)
     /* 6.系统时钟源，陀螺仪采样率，低通滤波设置*/
     /* 配置时钟前，确认正常工作，读一下id*/
     Int_MPU6050_ReadByte(MPU_DEVICE_ID_REG, &dev_id);
-    if(dev_id == MPU_IIC_ADDR)
+    if(dev_id == MPU_IIC_ADDR || dev_id == 0x70) //有的模块地址是0x68，有的是0x70，可能是因为接线方式不同导致的
     {
         /* 6.1配置时钟源，选择陀螺仪x轴的时钟，精度更高*/
         Int_MPU6050_WriteByte(MPU_PWR_MGMT1_REG, 0x01);
@@ -256,4 +256,12 @@ void Int_MPU6050_Get_Accel(short *ax, short *ay, short *az )
     *ax =( (short)buff[0] << 8 )| buff[1];
     *ay =( (short)buff[2] << 8 )| buff[3];
     *az =( (short)buff[4] << 8 )| buff[5];
+}
+
+void test_whoami(void)
+{
+    uint8_t id = 0;
+    Int_MPU6050_ReadByte(0x75, &id);
+    // 通过串口打印id的值，期望是0x68
+    printf("WHO_AM_I = 0x%02X\r\n", id);
 }

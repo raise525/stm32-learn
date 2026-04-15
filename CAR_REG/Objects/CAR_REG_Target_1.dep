@@ -11,7 +11,7 @@ I (Start\core_cm3.h)(0x615FF1D6)
 I (D:\Program Files\keil\ARM\ARM_Compiler_5.06u7\include\stdint.h)(0x5E8E3CC2)
 I (Start\system_stm32f10x.h)(0x615FF1D6)
 F (.\Start\system_stm32f10x.h)(0x615FF1D6)()
-F (.\User\main.c)(0x69C4967E)(--c99 --gnu -c --cpu Cortex-M3 -D__MICROLIB -g -O0 --apcs=interwork --split_sections -I .\Start -I .\User -I .\Dri -I .\Int -I .\Com -I .\App -I .\Mid\FreeRTOS -I .\Mid\FreeRTOS\include -I .\Mid\FreeRTOS\Portable -I .\Int\OLED-I"D:\Program Files\keil\ARM\Packs\Keil\STM32F1xx_DFP\2.4.1\Device\Include"-D__UVISION_VERSION="543" -DSTM32F10X_MD -DSTM32F10X_MD-o .\objects\main.o --omf_browse .\objects\main.crf --depend .\objects\main.d)
+F (.\User\main.c)(0x69DF8718)(--c99 --gnu -c --cpu Cortex-M3 -D__MICROLIB -g -O0 --apcs=interwork --split_sections -I .\Start -I .\User -I .\Dri -I .\Int -I .\Com -I .\App -I .\Mid\FreeRTOS -I .\Mid\FreeRTOS\include -I .\Mid\FreeRTOS\Portable -I .\Int\OLED-I"D:\Program Files\keil\ARM\Packs\Keil\STM32F1xx_DFP\2.4.1\Device\Include"-D__UVISION_VERSION="543" -DSTM32F10X_MD -DSTM32F10X_MD-o .\objects\main.o --omf_browse .\objects\main.crf --depend .\objects\main.d)
 I (User\main.h)(0x69BE3D73)
 I (.\Start\stm32f10x.h)(0x615FF1D6)
 I (.\Start\core_cm3.h)(0x615FF1D6)
@@ -32,12 +32,14 @@ I (.\Dri\Dri_TIM.h)(0x69BE3C7E)
 I (.\Int\Int_Encoder.h)(0x69C282D9)
 I (.\Dri\Dri_USART1.h)(0x69BCBDF9)
 I (D:\Program Files\keil\ARM\ARM_Compiler_5.06u7\include\stdio.h)(0x5E8E3CC2)
-I (.\Int\Int_MPU6050.h)(0x69C0B555)
-I (.\Dri\Dri_I2C.h)(0x69BF9E4C)
-I (.\App\APP_Car.h)(0x69C29324)
+I (.\Int\Int_MPU6050.h)(0x69D4F39E)
+I (.\Dri\Dri_I2C.h)(0x69CE0E1E)
+I (.\App\APP_Car.h)(0x69DF37BB)
 I (.\Com\Com_Filter.h)(0x66AC9E3E)
 I (D:\Program Files\keil\ARM\ARM_Compiler_5.06u7\include\math.h)(0x5E8E3CC2)
 I (.\Dri\Dri_ADC.h)(0x69C3D5D4)
+I (.\Int\OLED\oled.h)(0x69C4A04C)
+I (D:\Program Files\keil\ARM\ARM_Compiler_5.06u7\include\stdlib.h)(0x5E8E3CC2)
 F (.\Dri\Dri_TIM.c)(0x69BE3DE7)(--c99 --gnu -c --cpu Cortex-M3 -D__MICROLIB -g -O0 --apcs=interwork --split_sections -I .\Start -I .\User -I .\Dri -I .\Int -I .\Com -I .\App -I .\Mid\FreeRTOS -I .\Mid\FreeRTOS\include -I .\Mid\FreeRTOS\Portable -I .\Int\OLED-I"D:\Program Files\keil\ARM\Packs\Keil\STM32F1xx_DFP\2.4.1\Device\Include"-D__UVISION_VERSION="543" -DSTM32F10X_MD -DSTM32F10X_MD-o .\objects\dri_tim.o --omf_browse .\objects\dri_tim.crf --depend .\objects\dri_tim.d)
 I (Dri\Dri_TIM.h)(0x69BE3C7E)
 I (.\Start\stm32f10x.h)(0x615FF1D6)
@@ -52,7 +54,7 @@ I (D:\Program Files\keil\ARM\ARM_Compiler_5.06u7\include\stdint.h)(0x5E8E3CC2)
 I (.\Start\system_stm32f10x.h)(0x615FF1D6)
 I (D:\Program Files\keil\ARM\ARM_Compiler_5.06u7\include\stdio.h)(0x5E8E3CC2)
 F (.\Dri\Dri_I2C.c)(0x69BF9E4E)(--c99 --gnu -c --cpu Cortex-M3 -D__MICROLIB -g -O0 --apcs=interwork --split_sections -I .\Start -I .\User -I .\Dri -I .\Int -I .\Com -I .\App -I .\Mid\FreeRTOS -I .\Mid\FreeRTOS\include -I .\Mid\FreeRTOS\Portable -I .\Int\OLED-I"D:\Program Files\keil\ARM\Packs\Keil\STM32F1xx_DFP\2.4.1\Device\Include"-D__UVISION_VERSION="543" -DSTM32F10X_MD -DSTM32F10X_MD-o .\objects\dri_i2c.o --omf_browse .\objects\dri_i2c.crf --depend .\objects\dri_i2c.d)
-I (Dri\Dri_I2C.h)(0x69BF9E4C)
+I (Dri\Dri_I2C.h)(0x69CE0E1E)
 I (.\Start\stm32f10x.h)(0x615FF1D6)
 I (.\Start\core_cm3.h)(0x615FF1D6)
 I (D:\Program Files\keil\ARM\ARM_Compiler_5.06u7\include\stdint.h)(0x5E8E3CC2)
@@ -83,34 +85,40 @@ I (.\Start\core_cm3.h)(0x615FF1D6)
 I (D:\Program Files\keil\ARM\ARM_Compiler_5.06u7\include\stdint.h)(0x5E8E3CC2)
 I (.\Start\system_stm32f10x.h)(0x615FF1D6)
 I (.\Dri\Dri_TIM.h)(0x69BE3C7E)
-F (.\Int\Int_MPU6050.c)(0x69C0B555)(--c99 --gnu -c --cpu Cortex-M3 -D__MICROLIB -g -O0 --apcs=interwork --split_sections -I .\Start -I .\User -I .\Dri -I .\Int -I .\Com -I .\App -I .\Mid\FreeRTOS -I .\Mid\FreeRTOS\include -I .\Mid\FreeRTOS\Portable -I .\Int\OLED-I"D:\Program Files\keil\ARM\Packs\Keil\STM32F1xx_DFP\2.4.1\Device\Include"-D__UVISION_VERSION="543" -DSTM32F10X_MD -DSTM32F10X_MD-o .\objects\int_mpu6050.o --omf_browse .\objects\int_mpu6050.crf --depend .\objects\int_mpu6050.d)
-I (Int\Int_MPU6050.h)(0x69C0B555)
+F (.\Int\Int_MPU6050.c)(0x69D4F81D)(--c99 --gnu -c --cpu Cortex-M3 -D__MICROLIB -g -O0 --apcs=interwork --split_sections -I .\Start -I .\User -I .\Dri -I .\Int -I .\Com -I .\App -I .\Mid\FreeRTOS -I .\Mid\FreeRTOS\include -I .\Mid\FreeRTOS\Portable -I .\Int\OLED-I"D:\Program Files\keil\ARM\Packs\Keil\STM32F1xx_DFP\2.4.1\Device\Include"-D__UVISION_VERSION="543" -DSTM32F10X_MD -DSTM32F10X_MD-o .\objects\int_mpu6050.o --omf_browse .\objects\int_mpu6050.crf --depend .\objects\int_mpu6050.d)
+I (Int\Int_MPU6050.h)(0x69D4F39E)
 I (.\Start\stm32f10x.h)(0x615FF1D6)
 I (.\Start\core_cm3.h)(0x615FF1D6)
 I (D:\Program Files\keil\ARM\ARM_Compiler_5.06u7\include\stdint.h)(0x5E8E3CC2)
 I (.\Start\system_stm32f10x.h)(0x615FF1D6)
-I (.\Dri\Dri_I2C.h)(0x69BF9E4C)
-F (.\Int\OLED\oled.c)(0x69C4A077)(--c99 --gnu -c --cpu Cortex-M3 -D__MICROLIB -g -O0 --apcs=interwork --split_sections -I .\Start -I .\User -I .\Dri -I .\Int -I .\Com -I .\App -I .\Mid\FreeRTOS -I .\Mid\FreeRTOS\include -I .\Mid\FreeRTOS\Portable -I .\Int\OLED-I"D:\Program Files\keil\ARM\Packs\Keil\STM32F1xx_DFP\2.4.1\Device\Include"-D__UVISION_VERSION="543" -DSTM32F10X_MD -DSTM32F10X_MD-o .\objects\oled.o --omf_browse .\objects\oled.crf --depend .\objects\oled.d)
+I (.\Dri\Dri_I2C.h)(0x69CE0E1E)
+F (.\Int\OLED\oled.c)(0x69DE3BC5)(--c99 --gnu -c --cpu Cortex-M3 -D__MICROLIB -g -O0 --apcs=interwork --split_sections -I .\Start -I .\User -I .\Dri -I .\Int -I .\Com -I .\App -I .\Mid\FreeRTOS -I .\Mid\FreeRTOS\include -I .\Mid\FreeRTOS\Portable -I .\Int\OLED-I"D:\Program Files\keil\ARM\Packs\Keil\STM32F1xx_DFP\2.4.1\Device\Include"-D__UVISION_VERSION="543" -DSTM32F10X_MD -DSTM32F10X_MD-o .\objects\oled.o --omf_browse .\objects\oled.crf --depend .\objects\oled.d)
 I (Int\OLED\oled.h)(0x69C4A04C)
 I (D:\Program Files\keil\ARM\ARM_Compiler_5.06u7\include\stdlib.h)(0x5E8E3CC2)
 I (.\Start\stm32f10x.h)(0x615FF1D6)
 I (.\Start\core_cm3.h)(0x615FF1D6)
 I (D:\Program Files\keil\ARM\ARM_Compiler_5.06u7\include\stdint.h)(0x5E8E3CC2)
 I (.\Start\system_stm32f10x.h)(0x615FF1D6)
-I (Int\OLED\oledfont.h)(0x5E14019C)
+I (Int\OLED\oledfont.h)(0x69D47B3D)
 I (.\Dri\Dri_SPI.h)(0x69C4967E)
 F (.\Com\Com_Filter.c)(0x66AC9E3C)(--c99 --gnu -c --cpu Cortex-M3 -D__MICROLIB -g -O0 --apcs=interwork --split_sections -I .\Start -I .\User -I .\Dri -I .\Int -I .\Com -I .\App -I .\Mid\FreeRTOS -I .\Mid\FreeRTOS\include -I .\Mid\FreeRTOS\Portable -I .\Int\OLED-I"D:\Program Files\keil\ARM\Packs\Keil\STM32F1xx_DFP\2.4.1\Device\Include"-D__UVISION_VERSION="543" -DSTM32F10X_MD -DSTM32F10X_MD-o .\objects\com_filter.o --omf_browse .\objects\com_filter.crf --depend .\objects\com_filter.d)
 I (Com\Com_Filter.h)(0x66AC9E3E)
-F (.\App\APP_Car.c)(0x69C29324)(--c99 --gnu -c --cpu Cortex-M3 -D__MICROLIB -g -O0 --apcs=interwork --split_sections -I .\Start -I .\User -I .\Dri -I .\Int -I .\Com -I .\App -I .\Mid\FreeRTOS -I .\Mid\FreeRTOS\include -I .\Mid\FreeRTOS\Portable -I .\Int\OLED-I"D:\Program Files\keil\ARM\Packs\Keil\STM32F1xx_DFP\2.4.1\Device\Include"-D__UVISION_VERSION="543" -DSTM32F10X_MD -DSTM32F10X_MD-o .\objects\app_car.o --omf_browse .\objects\app_car.crf --depend .\objects\app_car.d)
-I (App\APP_Car.h)(0x69C29324)
-I (.\Int\Int_MPU6050.h)(0x69C0B555)
+F (.\App\APP_Car.c)(0x69DF87A4)(--c99 --gnu -c --cpu Cortex-M3 -D__MICROLIB -g -O0 --apcs=interwork --split_sections -I .\Start -I .\User -I .\Dri -I .\Int -I .\Com -I .\App -I .\Mid\FreeRTOS -I .\Mid\FreeRTOS\include -I .\Mid\FreeRTOS\Portable -I .\Int\OLED-I"D:\Program Files\keil\ARM\Packs\Keil\STM32F1xx_DFP\2.4.1\Device\Include"-D__UVISION_VERSION="543" -DSTM32F10X_MD -DSTM32F10X_MD-o .\objects\app_car.o --omf_browse .\objects\app_car.crf --depend .\objects\app_car.d)
+I (App\APP_Car.h)(0x69DF37BB)
+I (.\Int\Int_MPU6050.h)(0x69D4F39E)
 I (.\Start\stm32f10x.h)(0x615FF1D6)
 I (.\Start\core_cm3.h)(0x615FF1D6)
 I (D:\Program Files\keil\ARM\ARM_Compiler_5.06u7\include\stdint.h)(0x5E8E3CC2)
 I (.\Start\system_stm32f10x.h)(0x615FF1D6)
-I (.\Dri\Dri_I2C.h)(0x69BF9E4C)
+I (.\Dri\Dri_I2C.h)(0x69CE0E1E)
 I (.\Com\Com_Filter.h)(0x66AC9E3E)
 I (D:\Program Files\keil\ARM\ARM_Compiler_5.06u7\include\math.h)(0x5E8E3CC2)
+I (.\Dri\Dri_ADC.h)(0x69C3D5D4)
+I (.\Int\OLED\oled.h)(0x69C4A04C)
+I (D:\Program Files\keil\ARM\ARM_Compiler_5.06u7\include\stdlib.h)(0x5E8E3CC2)
+I (.\Int\Int_Encoder.h)(0x69C282D9)
+I (.\Dri\Dri_TIM.h)(0x69BE3C7E)
+I (D:\Program Files\keil\ARM\ARM_Compiler_5.06u7\include\stdio.h)(0x5E8E3CC2)
 F (.\Mid\FreeRTOS\FreeRTOSConfig.h)(0x69AE84D6)()
 F (.\Mid\FreeRTOS\Source\croutine.c)(0x64020E50)(--c99 --gnu -c --cpu Cortex-M3 -D__MICROLIB -g -O0 --apcs=interwork --split_sections -I .\Start -I .\User -I .\Dri -I .\Int -I .\Com -I .\App -I .\Mid\FreeRTOS -I .\Mid\FreeRTOS\include -I .\Mid\FreeRTOS\Portable -I .\Int\OLED-I"D:\Program Files\keil\ARM\Packs\Keil\STM32F1xx_DFP\2.4.1\Device\Include"-D__UVISION_VERSION="543" -DSTM32F10X_MD -DSTM32F10X_MD-o .\objects\croutine.o --omf_browse .\objects\croutine.crf --depend .\objects\croutine.d)
 I (.\Mid\FreeRTOS\include\FreeRTOS.h)(0x64020E50)

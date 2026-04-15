@@ -27,86 +27,16 @@ Project File Date:  03/25/2026
 <h2>Output:</h2>
 *** Using Compiler 'V5.06 update 7 (build 960)', folder: 'D:\Program Files\keil\ARM\ARM_Compiler_5.06u7\Bin'
 Build target 'Target_1'
-compiling Dri_ADC.c...
-compiling Int_TB6612.c...
-compiling Com_Filter.c...
-compiling oled.c...
-.\Dri\Dri_SPI.h(25): warning:  #1-D: last line of file ends without a newline
-  #endif
-Int\OLED\oled.c(399): warning:  #223-D: function "for_delay_ms" declared implicitly
-  	for_delay_ms(200);
-Int\OLED\oled.c: 2 warnings, 0 errors
-compiling croutine.c...
-compiling system_stm32f10x.c...
 compiling APP_Car.c...
-.\Dri\Dri_I2C.h(29): warning:  #1-D: last line of file ends without a newline
-  #endif
-App\APP_Car.c(31): warning:  #223-D: function "printf" declared implicitly
-      printf("accel_angle = %.1f\r\n", accel_angle);
-App\APP_Car.c(34): warning:  #1-D: last line of file ends without a newline
+App\APP_Car.c(70): warning:  #167-D: argument of type "char *" is incompatible with parameter of type "u8 *"
+      OLED_ShowString(48,48,angle_str,16,1); // 显示在Angle:后面，是六个字符�? x=6*8=48开始；第四行，y=48
+App\APP_Car.c(74): warning:  #1-D: last line of file ends without a newline
   }
-App\APP_Car.c: 3 warnings, 0 errors
-compiling Int_Encoder.c...
-Int\Int_Encoder.c(47): warning:  #1-D: last line of file ends without a newline
-  }
-Int\Int_Encoder.c: 1 warning, 0 errors
-compiling Dri_TIM.c...
-compiling Dri_I2C.c...
-Dri\Dri_I2C.h(29): warning:  #1-D: last line of file ends without a newline
-  #endif
-Dri\Dri_I2C.c: 1 warning, 0 errors
-compiling Dri_SPI.c...
-Dri\Dri_SPI.h(25): warning:  #1-D: last line of file ends without a newline
-  #endif
-Dri\Dri_SPI.c(35): warning:  #177-D: variable "rByte"  was declared but never referenced
-      uint8_t rByte = 0x00;
-Dri\Dri_SPI.c: 2 warnings, 0 errors
-compiling Dri_USART1.c...
-compiling Int_MPU6050.c...
-.\Dri\Dri_I2C.h(29): warning:  #1-D: last line of file ends without a newline
-  #endif
-Int\Int_MPU6050.c(113): warning:  #1294-D: Old-style function Int_MPU6050_Set_DLPF_CFG
-  void Int_MPU6050_Set_DLPF_CFG(rate)
-Int\Int_MPU6050.c(113): warning:  #1079-D: standard requires that parameter "rate"  be given a type by a subsequent declaration ("int" assumed)
-  void Int_MPU6050_Set_DLPF_CFG(rate)
-Int\Int_MPU6050.c(189): warning:  #223-D: function "for_delay_ms" declared implicitly
-      for_delay_ms(300);
-Int\Int_MPU6050.c(193): warning:  #223-D: function "Int_MPU6050_WritaByte" declared implicitly
-      Int_MPU6050_WritaByte(MPU_GYRO_CFG_REG, 3 << 3);
-Int\Int_MPU6050.c(259): warning:  #1-D: last line of file ends without a newline
-  }
-Int\Int_MPU6050.c: 6 warnings, 0 errors
-compiling list.c...
-compiling core_cm3.c...
-compiling event_groups.c...
-compiling main.c...
-.\Dri\Dri_I2C.h(29): warning:  #1-D: last line of file ends without a newline
-  #endif
-User\main.c(37): warning:  #177-D: variable "gx"  was declared but never referenced
-      short gx=0,gy=0,gz=0;
-User\main.c(37): warning:  #177-D: variable "gy"  was declared but never referenced
-      short gx=0,gy=0,gz=0;
-User\main.c(37): warning:  #177-D: variable "gz"  was declared but never referenced
-      short gx=0,gy=0,gz=0;
-User\main.c(38): warning:  #177-D: variable "ax"  was declared but never referenced
-      short ax=0,ay=0,az=0;
-User\main.c(38): warning:  #177-D: variable "ay"  was declared but never referenced
-      short ax=0,ay=0,az=0;
-User\main.c(38): warning:  #177-D: variable "az"  was declared but never referenced
-      short ax=0,ay=0,az=0;
-User\main.c: 7 warnings, 0 errors
-compiling queue.c...
-compiling timers.c...
-compiling stream_buffer.c...
-compiling heap_4.c...
-compiling tasks.c...
-compiling port.c...
+App\APP_Car.c: 2 warnings, 0 errors
 linking...
-.\Objects\CAR_REG.axf: Error: L6218E: Undefined symbol Int_MPU6050_WritaByte (referred from int_mpu6050.o).
-Not enough information to list image symbols.
-Not enough information to list load addresses in the image map.
-Finished: 2 information, 0 warning and 1 error messages.
-".\Objects\CAR_REG.axf" - 1 Error(s), 22 Warning(s).
+Program Size: Code=11644 RO-data=8124 RW-data=216 ZI-data=3032  
+FromELF: creating hex file...
+".\Objects\CAR_REG.axf" - 0 Error(s), 2 Warning(s).
 
 <h2>Software Packages used:</h2>
 
@@ -119,8 +49,7 @@ Package Vendor: Keil
   D:/Program Files/keil/ARM/Packs/Keil/STM32F1xx_DFP/2.4.1/Device/Include
 
 <h2>Collection of Component Files used:</h2>
-Target not created.
-Build Time Elapsed:  00:00:01
+Build Time Elapsed:  00:00:00
 </pre>
 </body>
 </html>
